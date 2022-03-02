@@ -103,11 +103,11 @@ class DatabaseAccessObject {
 			PreparedStatement addEmployeeStatement = null;
 			if (e.getEndDateAsLocalDate() == null) {
 				addEmployeeStatement = getConnection().prepareStatement(
-						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,dateOfEmploymentStart,personID)" +
+						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,startDate,personID)" +
 								" VALUES (?,?,?,?);");
 			} else {
 				addEmployeeStatement = getConnection().prepareStatement(
-						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,dateOfEmploymentStart,personID,dateOfEmploymentEnd)" +
+						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,startDate,personID,endDate)" +
 								" VALUES (?,?,?,?,?);");
 				addEmployeeStatement.setString(5, DATE_CONVERTER.toString(e.getEndDateAsLocalDate()));
 

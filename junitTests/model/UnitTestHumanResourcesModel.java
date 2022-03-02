@@ -126,6 +126,7 @@ class UnitTestHumanResourcesModel {
 
 		// test objects
 		employee = model.new Employee(nameValid1, nameValid2LowerCaseTrailingSpace, emailValid1, phoneNumberValid1, hourlyRateInPenceValid2, weeklyHoursValid1, startDateValid1, endDateValid1);
+		System.out.println(startDateValid1);
 	}
 
 	/**
