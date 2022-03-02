@@ -11,9 +11,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.LocalDateStringConverter;
 import model.ModelEnums.Categories;
-import model.ModelEnums.EmployeeNumbers;
-import model.ModelEnums.EmployeeMessages;
-import model.ModelEnums.PersonStrings;
+import model.ModelEnums.Numbers;
+import model.ModelEnums.Messages;
+import model.ModelEnums.Messages;
 import model.StockItemModel.AbstractStockItem;
 
 public class HumanResourcesModel {
@@ -249,23 +249,23 @@ public class HumanResourcesModel {
 		/**
 		 * @return the hoursPerWeek
 		 */
-		public double getWeeklyHours() {
+		public double getHoursPerWeek() {
 			return hoursPerWeek;
 		}
 
 		/**
 		 * @return the hourlyRateInPence as SimpleDoubleProperty
 		 */
-		public SimpleDoubleProperty getWeeklyHoursAsSimpleProperty() {
+		public SimpleDoubleProperty getHoursPerWeekAsSimpleProperty() {
 			return new SimpleDoubleProperty(hoursPerWeek);
 		}
 
 		/**
 		 * @param hoursPerWeek the {@code hoursPerWeek} to set
-		 * @throws IllegalArgumentException if {@code hoursPerWeek} is a negative number
+		 * @throws IllegalArgumentException if {@code hoursPerWeek} is a negative number, or is greater than {@link Numbers.EMPLOYEE_MAX_WEEKLY_HOURS}
 		 */
 		public void setHoursPerWeek(double hoursPerWeek) throws IllegalArgumentException {
-			this.hoursPerWeek = HumanResourcesModelValidator.weeklyHours(hoursPerWeek);
+			this.hoursPerWeek = HumanResourcesModelValidator.hoursPerWeek(hoursPerWeek);
 		}
 
 		/**
@@ -309,7 +309,7 @@ public class HumanResourcesModel {
 		 * @throws IllegalArgumentException if endDate is chronologically before {@code this.dateOfEmploymentStart}
 		 */
 		void setEndDate(LocalDate endDate) throws IllegalArgumentException {
-				this.endDate = HumanResourcesModelValidator.endDate(this.startDate, endDate);
+			this.endDate = HumanResourcesModelValidator.endDate(this.startDate, endDate);
 		}
 
 		///////////////////////////
@@ -337,9 +337,9 @@ public class HumanResourcesModel {
 					addSingleShift(key, shiftsToAdd.get(key));
 				}
 			} else if (shiftsToAdd == null) {
-				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_NULL.get());
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_SHIFTS_NULL.get());
 			} else {
-				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_EMPTY.get());
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_SHIFTS_EMPTY.get());
 			}
 		}
 
@@ -354,7 +354,7 @@ public class HumanResourcesModel {
 			if (date != null && hours != null && hours > 0) {
 				this.shifts.put(date, hours);
 			} else {
-				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_ADD_SINGLE_FAILED.get() + " [Date=" + ((date == null) ? "null" : date) +
+				throw new IllegalArgumentException(Messages.EMPLOYEE_ADD_SHIFT_SINGLE_FAILED.get() + " [Date=" + ((date == null) ? "null" : date) +
 						" hours=" + ((hours == null) ? "null" : hours) + "] for Employee " + super.getForename());
 			}
 
@@ -384,7 +384,7 @@ public class HumanResourcesModel {
 					", email=" + super.getEmail() +
 					", phoneNumber=" + super.getPhoneNumber() +
 					", rate=" + formatter.format(this.getHourlyRate() / 100.0) +
-					", weeklyHours=" + this.getWeeklyHours() +
+					", weeklyHours=" + this.getHoursPerWeek() +
 					", startDate=" + this.getStartDateAsLocalDate() +
 					", endDate=" + ((this.getEndDateAsLocalDate() == null) ? "Still Employed" : this.getEndDateAsLocalDate()) + "]";
 		}
@@ -615,7 +615,7 @@ public class HumanResourcesModel {
 		/**
 		 * Validate a forename or surname. If name is blank, null, or contain chars other than 'a-z', 'A-Z' or '-' (Additionally '-' is not allowed to appear
 		 * concurrently in the name parameter) an IllegalArgumentException is thrown. Otherwise the name parameter is trimmed of leading and trailing
-		 * whitespace and returned
+		 * whitespace, the first letter is made upper case, and the rest are made lower case; and returned
 		 * 
 		 * @param name
 		 * @throws IllegalArgumentException if name parameter is blank, null or contain chars other than 'a-z', 'A-Z' or '-'. Additionally '-' is not allowed
@@ -623,7 +623,10 @@ public class HumanResourcesModel {
 		 */
 		public static String name(String name) throws IllegalArgumentException {
 			if (name != null && !name.isBlank()) {
+				// sanitise by removing leading and trailing spaces and make initial char upper case, and rest lower case
 				name = name.trim();
+				name = name.toUpperCase().charAt(0) + name.toLowerCase().substring(1, name.length());
+				// check all chars in name parameter are valid chars
 				boolean charsValidated = true;
 				for (char c : name.toCharArray()) {
 					if (!NAME_CHARS.contains(String.format("%c", c))) {
@@ -631,22 +634,22 @@ public class HumanResourcesModel {
 						break;
 					}
 				}
+				// ensure no repeated hyphens
 				if (charsValidated && name.contains("-".repeat(2))) {
 					charsValidated = false;
 				}
-				if (charsValidated && name.length() >= 2) {
-					name = name.toLowerCase().trim();
-					name = name.toUpperCase().charAt(0) + name.substring(1, name.length());
+				// ensure length is minimum of 2
+				if (charsValidated && name.length() >= Numbers.PERSON_NAME_MIN_LENGTH.get()) {
 					return name;
-				} else if (name.length()<2){
-					throw new IllegalArgumentException("Name must be at least 2 characters long");
+				} else if (name.length() < 2) {
+					throw new IllegalArgumentException(Messages.PERSON_SET_NAME_TOO_FEW_CHARS.get());
 				} else {
-					throw new IllegalArgumentException(PersonStrings.MSG_NAME_INVALID_CHARS.get());
+					throw new IllegalArgumentException(Messages.PERSON_SET_NAME_INVALID_CHARS.get());
 				}
 			} else if (name == null) {
-				throw new IllegalArgumentException(PersonStrings.MSG_NAME_NULL.get());
+				throw new IllegalArgumentException(Messages.PERSON_SET_NAME_NULL.get());
 			} else {
-				throw new IllegalArgumentException(PersonStrings.MSG_NAME_BLANK.get());
+				throw new IllegalArgumentException(Messages.PERSON_SET_NAME_BLANK.get());
 			}
 		}
 
@@ -664,7 +667,7 @@ public class HumanResourcesModel {
 			} else if (validateEmail(email.trim())) {
 				return email.trim();
 			} else {
-				throw new IllegalArgumentException(PersonStrings.MSG_EMAIL_INVALID.get() + email);
+				throw new IllegalArgumentException(Messages.PERSON_SET_EMAIL_INVALID.get() + email);
 			}
 		}
 
@@ -690,25 +693,27 @@ public class HumanResourcesModel {
 		 * @throws {@code IllegalArgumentException} if hourly rate is set to below {@code EmployeeNumber.MINIMUM_WAGE.get()}
 		 */
 		public static int hourlyRateInPence(int hourlyRateInPence) throws IllegalArgumentException {
-			if (hourlyRateInPence >= EmployeeNumbers.INT_MIN_WAGE.get()) {
+			if (hourlyRateInPence >= Numbers.INT_MIN_WAGE.get()) {
 				return hourlyRateInPence;
 			} else {
 				throw new IllegalArgumentException(String.format("Hourly rate cannot be set to below minimum wage. Minimum wage is £%.2f but specified Hourly Rate was £%.2f.",
-						(EmployeeNumbers.INT_MIN_WAGE.get() / 100.0), (hourlyRateInPence / 100.0)));
+						(Numbers.INT_MIN_WAGE.get() / 100.0), (hourlyRateInPence / 100.0)));
 			}
 		}
 
 		/**
-		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, or an {@code IllegalArgumentException} is thrown.
+		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, and less than or equal to {@code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()}, or an {@code IllegalArgumentException} is thrown.
 		 * 
 		 * @param hoursPerWeek the hoursPerWeek to set
-		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number.
+		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number, or is greater than {@Code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()).
 		 */
-		public static double weeklyHours(double hoursPerWeek) throws IllegalArgumentException {
-			if (hoursPerWeek >= 0) {
+		public static double hoursPerWeek(double hoursPerWeek) throws IllegalArgumentException {
+			if (hoursPerWeek >= 0 && hoursPerWeek <= Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()) {
 				return hoursPerWeek;
+			} else if (hoursPerWeek < 0) {
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_WEEKLY_HOURS_NEGATIVE.get());
 			} else {
-				throw new IllegalArgumentException("Hours per week cannot be set to a negative value.");
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_WEEKLY_HOURS_OVER_MAX.get());
 			}
 		}
 
@@ -722,7 +727,7 @@ public class HumanResourcesModel {
 			if (startDate != null) {
 				return startDate;
 			} else {
-				throw new IllegalArgumentException("Start date cannot be set to null.");
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_DATE_OF_START_NULL.get());
 			}
 		}
 
@@ -734,7 +739,7 @@ public class HumanResourcesModel {
 			if (endDate == null || (endDate != null && startDate != null && !endDate.isBefore(startDate))) {
 				return endDate;
 			} else {
-				throw new IllegalArgumentException(EmployeeMessages.MSG_DATE_OF_END_IMPOSSIBLE.get());
+				throw new IllegalArgumentException(Messages.EMPLOYEE_SET_DATE_OF_END_IMPOSSIBLE.get());
 			}
 
 		}

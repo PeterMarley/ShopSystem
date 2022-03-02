@@ -6,7 +6,8 @@ import java.util.Hashtable;
 import model.ModelEnums.CategoryFloorItem;
 import model.ModelEnums.CategoryLiquidFuel;
 import model.ModelEnums.CategorySolidFuel;
-import model.ModelEnums.StockMessages;
+import model.ModelEnums.Messages;
+import model.ModelEnums.Messages;
 import model.ModelEnums.StorageTemp;
 
 public class StockItemModel {
@@ -73,7 +74,7 @@ public class StockItemModel {
 		@Override
 		public boolean equals(Object obj) throws IllegalArgumentException {
 			if (obj == null) {
-				throw new IllegalArgumentException(StockMessages.MSG_EQUALS_NULL_PARAM.get());
+				throw new IllegalArgumentException(Messages.STOCK_EQUALS_NULL_PARAM.get());
 			}
 			if (!(obj instanceof AbstractStockItem)) {
 				return false;
@@ -106,9 +107,9 @@ public class StockItemModel {
 			if (name != null && !name.isBlank()) {
 				this.name = name;
 			} else if (name == null) {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_NAME_NULL.get());
+				throw new IllegalArgumentException(Messages.STOCK_SET_NAME_NULL.get());
 			} else {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_NAME_BLANK.get());
+				throw new IllegalArgumentException(Messages.STOCK_SET_NAME_BLANK.get());
 			}
 		}
 
@@ -157,9 +158,9 @@ public class StockItemModel {
 			if (sellHistory != null && sellHistory.size() > 0) {
 				this.sellHistory = sellHistory;
 			} else if (sellHistory == null) {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_SELLHISTORY_NULL.get());
+				throw new IllegalArgumentException(Messages.STOCK_SET_SELLHISTORY_NULL.get());
 			} else {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_SELLHISTORY_EMPTY.get());
+				throw new IllegalArgumentException(Messages.STOCK_SET_SELLHISTORY_EMPTY.get());
 			}
 		}
 
@@ -177,7 +178,7 @@ public class StockItemModel {
 			if (priceInPence >= 1) {
 				this.priceInPence = priceInPence;
 			} else {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_PRICE_LESS_THAN_ONE.get() + priceInPence);
+				throw new IllegalArgumentException(Messages.STOCK_SET_PRICE_LESS_THAN_ONE.get() + priceInPence);
 			}
 		}
 
@@ -195,7 +196,7 @@ public class StockItemModel {
 			if (storageTemp != null) {
 				this.storageTemp = storageTemp;
 			} else {
-				throw new IllegalArgumentException(StockMessages.MSG_SET_STORAGETEMP_NULL.get());
+				throw new IllegalArgumentException(Messages.STOCK_SET_STORAGETEMP_NULL.get());
 			}
 		}
 
