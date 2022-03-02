@@ -3,25 +3,21 @@ package model;
 import java.time.LocalDateTime;
 import java.util.Hashtable;
 
-import model.stock.STKEnums.StockMessages;
-import model.stock.STKEnums.StorageTemp;
+import model.ModelEnums.CategoryFloorItem;
+import model.ModelEnums.CategoryLiquidFuel;
+import model.ModelEnums.CategorySolidFuel;
+import model.ModelEnums.StockMessages;
+import model.ModelEnums.StorageTemp;
 
 public class StockItemModel {
-	
+
 	private static int uniqueIDSeed = 0;
+
 	
 	/**
+	 * The abstract superclass for all Stock objects
 	 * 
 	 * @author Peter Marley
-	 *         StockItem
-	 *         - uniqueID : long
-	 *         - ageRestricted : boolean
-	 *         - sellHistory : Hashtable<Date, Integer>
-	 *         - price : double
-	 *         - name : String
-	 *         - supplier : Supplier
-	 *         - storageTemperature : StorageTemp
-	 * 
 	 */
 	public abstract class AbstractStockItem {
 
@@ -200,6 +196,229 @@ public class StockItemModel {
 				this.storageTemp = storageTemp;
 			} else {
 				throw new IllegalArgumentException(StockMessages.MSG_SET_STORAGETEMP_NULL.get());
+			}
+		}
+
+	}
+
+	/**
+	 * A Stock Item, any tangible "off the shelf" item from a shop
+	 * 
+	 * @author Peter Marley
+	 *
+	 */
+	public class StockFloorItem extends AbstractStockItem {
+
+		private CategoryFloorItem category;
+
+		/**
+		 * Fully parameterised constructor for a FloorItem object
+		 * 
+		 * @param name
+		 * @param ageRestricted
+		 * @param priceInPence
+		 * @param storageTemp
+		 * @param category
+		 */
+		public StockFloorItem(String name, boolean ageRestricted, int priceInPence, StorageTemp storageTemp, CategoryFloorItem category) {
+			super(name, ageRestricted, priceInPence, storageTemp);
+			this.setCategory(category);
+		}
+
+		/**
+		 * @return the category
+		 */
+		public CategoryFloorItem getCategory() {
+			return category;
+		}
+
+		/**
+		 * @param category the category to set
+		 * @throws IllegalArgumentException if category is null
+		 */
+		public void setCategory(CategoryFloorItem category) throws IllegalArgumentException {
+			if (category != null) {
+				this.category = category;
+			} else {
+				throw new IllegalArgumentException("FloorItem category cannot be set to null");
+			}
+		}
+
+	}
+
+	/**
+	 * Liquid Fuel, dispensed from pumps, or from a tank
+	 * 
+	 * @author Peter Marley
+	 *
+	 */
+	public class StockLiquidFuel extends AbstractStockItem {
+
+		private CategoryLiquidFuel category;
+		private int volumeInMillilitres;
+
+		public StockLiquidFuel(String name, boolean ageRestricted, int priceInPence, StorageTemp storageTemp, CategoryLiquidFuel category, int volumeInMillilitres) {
+			super(name, ageRestricted, priceInPence, storageTemp);
+			this.setCategory(category);
+			this.setVolumeInMillilitres(volumeInMillilitres);
+		}
+
+		/**
+		 * @return the category
+		 */
+		public CategoryLiquidFuel getCategory() {
+			return category;
+		}
+
+		/**
+		 * @param category the category to set
+		 * @throws IllegalArgumentException if category is null
+		 */
+		public void setCategory(CategoryLiquidFuel category) throws IllegalArgumentException {
+			if (category != null) {
+				this.category = category;
+			} else {
+				throw new IllegalArgumentException("LiquidFuelItem category cannot be null");
+			}
+		}
+
+		/**
+		 * @return the volumeInMillilitres
+		 */
+		public int getVolumeInMillilitres() {
+			return volumeInMillilitres;
+		}
+
+		/**
+		 * @param volumeInMillilitres the volumeInMillilitres to set
+		 * @throws IllegalArgumentException if volumeInMillilitres is less than 0
+		 */
+		public void setVolumeInMillilitres(int volumeInMillilitres) throws IllegalArgumentException {
+			if (volumeInMillilitres >= 0) {
+				this.volumeInMillilitres = volumeInMillilitres;
+			} else {
+				throw new IllegalArgumentException("LiquidFuelItem volumeInMillilitres cannot be less than 0");
+			}
+		}
+
+	}
+
+	/**
+	 * Solid Fuel, sold by bag of certain weight
+	 * 
+	 * @author Peter Marley
+	 * @StudentNumber 13404067
+	 * @Email pmarley03@qub.ac.uk
+	 * @GitHub https://github.com/PeterMarley
+	 *
+	 */
+	public class StockSolidFuel extends AbstractStockItem {
+
+		private CategorySolidFuel category;
+		private int unitsInStock;
+		private int weightInGrams;
+
+		/**
+		 * Fully Parameterised Constructor for this SolidFuelItem object
+		 * 
+		 * @param name
+		 * @param ageRestricted
+		 * @param priceInPence
+		 * @param storageTemp
+		 * @param category
+		 * @param weightInGrams
+		 */
+		public StockSolidFuel(String name, boolean ageRestricted, int priceInPence, StorageTemp storageTemp, CategorySolidFuel category, int weightInGrams) {
+			super(name, ageRestricted, priceInPence, storageTemp);
+			this.setCategory(category);
+			this.setUnitsInStock(0);
+			this.setWeightInGrams(weightInGrams);
+		}
+
+		/**
+		 * @return the category
+		 */
+		public CategorySolidFuel getCategory() {
+			return category;
+		}
+
+		/**
+		 * @param category the category to set
+		 * @throws IllegalArgumentException if category is null
+		 */
+		public void setCategory(CategorySolidFuel category) throws IllegalArgumentException {
+			if (category != null) {
+				this.category = category;
+			} else {
+				throw new IllegalArgumentException("SolidFuelItem category cannot be null");
+			}
+		}
+
+		/**
+		 * @return the unitsInStock
+		 */
+		public int getUnitsInStock() {
+			return unitsInStock;
+		}
+
+		/**
+		 * @param unitsInStock the unitsInStock to set
+		 * @throws IllegalArgumentException if unitsInStock is less than 0
+		 */
+		public void setUnitsInStock(int unitsInStock) throws IllegalArgumentException {
+			if (unitsInStock >= 0) {
+				this.unitsInStock = unitsInStock;
+			} else {
+				throw new IllegalArgumentException("SolidFuelItem unitsInStock cannot be less than 0 but was " + unitsInStock);
+			}
+		}
+
+		/**
+		 * Adds a specified number of units to {@code unitsInStock}
+		 * 
+		 * @param unitsToAdd
+		 * @throws IllegalArgumentException if unitsToAdd is 0 or less
+		 */
+		public void addUnitsInStock(int unitsToAdd) throws IllegalArgumentException {
+			if (unitsToAdd > 0) {
+				this.setUnitsInStock(this.getUnitsInStock() + unitsToAdd);
+			} else {
+				throw new IllegalArgumentException("SolidFuelItem unitsToAdd must be greater than 0 but was " + unitsToAdd);
+			}
+		}
+
+		/**
+		 * Removes a specified number of units from {@code unitsInStock}
+		 * 
+		 * @param unitsToRemove
+		 * @throws IllegalArgumentException if units to remove is 0 or less, or if the {@code unitsInStock} would be reduced to less than 0
+		 */
+		public void removeUnitsInStock(int unitsToRemove) throws IllegalArgumentException {
+			if (unitsToRemove > 0 && this.getUnitsInStock() - unitsToRemove >= 0) {
+				this.setUnitsInStock(this.getUnitsInStock() - unitsToRemove);
+			} else if (unitsToRemove <= 0) {
+				throw new IllegalArgumentException("SolidFuelItem unitsToRemove must be greater than 0 but was " + unitsToRemove);
+			} else {
+				throw new IllegalArgumentException("SolidFuelItem unitsInStock cannot be reduced below 0 but was attempted to be reduced to " + (this.getUnitsInStock() - unitsToRemove));
+			}
+		}
+
+		/**
+		 * @return the weightInGrams
+		 */
+		public int getWeightInGrams() {
+			return weightInGrams;
+		}
+
+		/**
+		 * @param weightInGrams the weightInGrams to set
+		 * @throws IllegalArgumentException if weightInGrams is less than 1
+		 */
+		public void setWeightInGrams(int weightInGrams) throws IllegalArgumentException {
+			if (weightInGrams >= 1) {
+				this.weightInGrams = weightInGrams;
+			} else {
+				throw new IllegalArgumentException("SolidFuelItem weightInGrams must be 1 or greater but was " + weightInGrams);
 			}
 		}
 

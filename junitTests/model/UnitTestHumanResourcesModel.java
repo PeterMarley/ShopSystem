@@ -12,9 +12,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import model.HumanResourcesModel.Employee;
-import model.HumanResourcesModel.EmployeeNumbers;
-import model.HumanResourcesModel.EmployeeStrings;
-import model.HumanResourcesModel.PersonStrings;
+import model.ModelEnums.EmployeeNumbers;
+import model.ModelEnums.PersonStrings;
 
 /**
  * Unit tests of both abstract superclass Person and its concrete subclass Employee
@@ -297,14 +296,14 @@ class UnitTestHumanResourcesModel {
 	void testContructor_Employee_Invalid_HourlyRateInPenceArg() {
 		IllegalArgumentException e;
 		
-		// just below minimum wage
+		// hourlyRateInPence below minimum wage (BVA)
 		e = assertThrows(IllegalArgumentException.class, () -> {
 			employee = model.new Employee(nameValid1, nameValid3MixedCaseLeadingSpace, emailValid1, phoneNumberValid1, hourlyRateInPenceInvalid1BVAInvalidUpper, weeklyHoursValid1, startDateValid1, endDateValid1);
 		});
 		assertEquals(String.format("Hourly rate cannot be set to below minimum wage. Minimum wage is £%.2f but specified Hourly Rate was £%.2f.",
 				(EmployeeNumbers.INT_MIN_WAGE.get() / 100.0), (hourlyRateInPenceInvalid1BVAInvalidUpper / 100.0)), e.getMessage());
 		
-		// just above zero
+		// hourlyRateInPence negative
 		e = assertThrows(IllegalArgumentException.class, () -> {
 			employee = model.new Employee(nameValid1, nameValid3MixedCaseLeadingSpace, emailValid1, phoneNumberValid1, hourlyRateInPenceInvalid2BVAInvalidNegative, weeklyHoursValid1, startDateValid1, endDateValid1);
 		});

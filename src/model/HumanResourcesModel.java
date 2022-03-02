@@ -10,88 +10,13 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.LocalDateStringConverter;
-
-import model.stock.STKAbstractItem;
-import model.stock.STKEnums.Categories;
+import model.ModelEnums.Categories;
+import model.ModelEnums.EmployeeNumbers;
+import model.ModelEnums.EmployeeStrings;
+import model.ModelEnums.PersonStrings;
+import model.StockItemModel.AbstractStockItem;
 
 public class HumanResourcesModel {
-
-	/**
-	 * Constant numbers for HREmployee class
-	 * 
-	 * @author Peter Marley
-	 * @StudentNumber 13404067
-	 * @Email pmarley03@qub.ac.uk
-	 * @GitHub https://github.com/PeterMarley
-	 *
-	 */
-	public enum EmployeeNumbers {
-		INT_MIN_WAGE(800),
-		INT_MIN_WEEKLY_HOURS(0);
-
-		private int number;
-
-		private EmployeeNumbers(int number) {
-			this.number = number;
-		}
-
-		public int get() {
-			return this.number;
-		}
-	}
-
-	/**
-	 * Constant Strings for HREmployee class
-	 * 
-	 * @author Peter Marley
-	 * @StudentNumber 13404067
-	 * @Email pmarley03@qub.ac.uk
-	 * @GitHub https://github.com/PeterMarley
-	 *
-	 */
-	public enum EmployeeStrings {
-		MSG_HOURLY_RATE_INVALID("HREmployee Constructor: Specified hourly rate is invalid "),
-		MSG_HOURS_PER_WEEK_INVALID("HREmployee Constructor: specified hoursPerWeek was a negative number"),
-		MSG_DATE_OF_START_NULL("HREmployee Constructor: Date of Employment Start was null"),
-		MSG_DATE_OF_END_IMPOSSIBLE("HREmployee Constructor: The employment end date was, impossibly, before the employment start date"),
-		MSG_SHIFTS_EMPTY("HREmployee Constructor: Provided list of shifts was empty"),
-		MSG_SHIFTS_NULL("HREmployee Constructor: Provided list of shifts was null"),
-		MSG_SHIFTS_ADD_SINGLE_FAILED("HREmployee Constructor: Specified shift could not be added:");
-
-		private String text;
-
-		private EmployeeStrings(String text) {
-			this.text = text;
-		}
-
-		public String get() {
-			return this.text;
-		}
-	}
-
-	/**
-	 * Constant Strings for HRPerson class
-	 * 
-	 * @author Peter Marley
-	 *
-	 */
-	public enum PersonStrings {
-		MSG_EMAIL_INVALID("Person email parameter failed validation: "),
-		MSG_NAME_BLANK("Person name (forename or surname) cannot be blank"),
-		MSG_NAME_NULL("Person name (forename or surname) cannot be set to null"),
-		VALUE_DEFAULT_EMAIL("no email provided"),
-		VALUE_DEFAULT_PHONE_NUMBER("no phone number provided");
-
-		private String text;
-
-		private PersonStrings(String text) {
-			this.text = text;
-		}
-
-		public String get() {
-			return this.text;
-		}
-	}
 
 	/**
 	 * The abstract parent class for all personel objects in this program
@@ -140,13 +65,12 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Set this contacts name. Must not be blank, or null.
+		 * Set this contacts name. Must not be blank, null, or contain chars other than 'a-z', 'A-Z' or '-'
 		 * 
-		 * @throws IllegalArgumentException if name is blank or null
+		 * @throws IllegalArgumentException if name is blank, null, or contains chars other than 'a-z', 'A-Z' or '-'
 		 */
 		public void setForename(String forename) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.name(forename))
-				this.forename = forename;
+			this.forename = HumanResourcesModelValidator.name(forename);
 		}
 
 		/**
@@ -164,14 +88,13 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Set this contacts surnname. Must not be blank, or null.
+		 * Set this contacts surnname. Must not be blank, null, or contain chars other than 'a-z', 'A-Z' or '-'
 		 * 
 		 * @return the name
-		 * @throws IllegalArgumentException if name is blank or null
+		 * @throws IllegalArgumentException if name is blank, null, or contains chars other than 'a-z', 'A-Z' or '-'
 		 */
 		public void setSurname(String surname) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.name(surname))
-				this.surname = surname;
+			this.surname = HumanResourcesModelValidator.name(surname);
 
 		}
 
@@ -190,15 +113,16 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Sets this contacts email. If parameter is blank or null it is set to {@code VALUE_DEFAULT_EMAIL.get()}
+		 * Sets this contacts email. The parameter is validated by {@code HumanResourcesModelValidator.email(String)}. If it is deemed valid it is set to
+		 * email.trim(),
+		 * if invalid an {@code IllegalArgumentException} is thrown. If the {@code email} parameter is {@code null} or a blank String the email field is set
+		 * to {@code null}.
 		 * 
 		 * @param email the email to set
-		 * @throws IllegalArgumentException if email is unsuccessfully validated by {@code EmailValidator.validateEmail(String)}
+		 * @throws IllegalArgumentException if email is unsuccessfully validated by {@code HumanResourcesModelValidator.email(String)}
 		 */
 		public void setEmail(String email) throws IllegalArgumentException {
-			if (email != null) email = email.trim();
-			if (HumanResourcesModelValidator.email(email))
-				this.email = email;
+			this.email = HumanResourcesModelValidator.email(email);
 		}
 
 		/**
@@ -216,11 +140,13 @@ public class HumanResourcesModel {
 		}
 
 		/**
+		 * Sets this contacts phoneNumber. The parameter is validated by {@code HumanResourcesModelValidator.phoneNumber(phoneNumber)}. If the parameter is
+		 * {@code null} or a blank {@code String}, it is set to {@code null}, otherwise it is set to {@code phoneNumber.trim()}
+		 * 
 		 * @param phoneNumber the phoneNumber to set
 		 */
 		public void setPhoneNumber(String phoneNumber) {
-			if (HumanResourcesModelValidator.phoneNumber(phoneNumber))
-				this.phoneNumber = phoneNumber;
+			this.phoneNumber = HumanResourcesModelValidator.phoneNumber(phoneNumber);
 		}
 
 		@Override
@@ -283,7 +209,7 @@ public class HumanResourcesModel {
 				throws IllegalArgumentException {
 			super(forename, surname, email, phoneNumber);
 			this.setHourlyRate(hourlyRate);
-			this.setWeeklyHours(weeklyHours);
+			this.setHoursPerWeek(weeklyHours);
 			this.setStartDate(start);
 			this.setEndDate(end);
 			this.converter = new LocalDateStringConverter();
@@ -313,12 +239,11 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * @param baseHourlyRate the baseHourlyRate to set (in pence)
-		 * @throws IllegalArgumentException if hourly rate is set to below MINIMUM_WAGE const
+		 * @param hourlyRateInPence the hourlyRateInPence to set
+		 * @throws IllegalArgumentException if parameter is less than {@code EmployeeNumbers.MINIMUM_WAGE.get()}
 		 */
-		public void setHourlyRate(int baseHourlyRate) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.hourlyRateInPence(baseHourlyRate))
-				this.hourlyRateInPence = baseHourlyRate;
+		public void setHourlyRate(int hourlyRateInPence) throws IllegalArgumentException {
+				this.hourlyRateInPence = HumanResourcesModelValidator.hourlyRateInPence(hourlyRateInPence);
 		}
 
 		/**
@@ -336,12 +261,11 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * @param hoursPerWeek the hoursPerWeek to set
-		 * @throws IllegalArgumentException if hoursPerWeek is a negative number
+		 * @param hoursPerWeek the {@code hoursPerWeek} to set
+		 * @throws IllegalArgumentException if {@code hoursPerWeek} is a negative number
 		 */
-		public void setWeeklyHours(double hoursPerWeek) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.weeklyHours(hoursPerWeek))
-				this.hoursPerWeek = hoursPerWeek;
+		public void setHoursPerWeek(double hoursPerWeek) throws IllegalArgumentException {
+				this.hoursPerWeek = HumanResourcesModelValidator.weeklyHours(hoursPerWeek);
 		}
 
 		/**
@@ -481,7 +405,7 @@ public class HumanResourcesModel {
 	public class Supplier extends Person {
 
 		private ArrayList<Categories> categories;
-		private ArrayList<STKAbstractItem> stockItems;
+		private ArrayList<AbstractStockItem> stockItems;
 		private Hashtable<LocalDate, String> transactions;
 
 		/**
@@ -496,7 +420,7 @@ public class HumanResourcesModel {
 			super(forename, surname, email, phoneNumber);
 
 			this.categories = new ArrayList<Categories>(5);
-			this.stockItems = new ArrayList<STKAbstractItem>();
+			this.stockItems = new ArrayList<AbstractStockItem>();
 
 			this.transactions = new Hashtable<LocalDate, String>();
 
@@ -570,8 +494,10 @@ public class HumanResourcesModel {
 			return 0;
 		}
 	}
-	
+
 	public static class HumanResourcesModelValidator {
+
+		private static final String NAME_CHARS = "abcdefghijklmnopqrstuvwxywABCDEFGHIJKLMNOPQRSTUVWXYZ-";
 
 		/**
 		 * This enumerated type stores the valid characters allowed, and invalid starting and ending characters
@@ -689,14 +615,31 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Validate a forename or surname. If name is blank or null an IllegalArgumentException is thrown
+		 * Validate a forename or surname. If name is blank, null, or contain chars other than 'a-z', 'A-Z' or '-' (Additionally '-' is not allowed to appear
+		 * concurrently in the name parameter) an IllegalArgumentException is thrown. Otherwise the name parameter is trimmed of leading and trailing
+		 * whitespace and returned
 		 * 
 		 * @param name
-		 * @throws IllegalArgumentException if name parameter is null or blank
+		 * @throws IllegalArgumentException if name parameter is blank, null or contain chars other than 'a-z', 'A-Z' or '-'. Additionally '-' is not allowed
+		 *                                  to appear concurrently in the name parameter
 		 */
-		public static boolean name(String name) throws IllegalArgumentException {
+		public static String name(String name) throws IllegalArgumentException {
 			if (name != null && !name.isBlank()) {
-				return true;
+				boolean charsValidated = true;
+				for (char c : name.toCharArray()) {
+					if (!NAME_CHARS.contains(String.format("%c", c))) {
+						charsValidated = false;
+						break;
+					}
+				}
+				if (charsValidated && name.contains("-".repeat(2))) {
+					charsValidated = false;
+				}
+				if (charsValidated) {
+					return name.trim();
+				} else {
+					throw new IllegalArgumentException(PersonStrings.MSG_NAME_INVALID_CHARS.get());
+				}
 			} else if (name == null) {
 				throw new IllegalArgumentException(PersonStrings.MSG_NAME_NULL.get());
 			} else {
@@ -705,52 +648,59 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Validates an email address.
+		 * Validates an email address. If the email parameter is null or a blank string, null is returned, otherwise it is trimmed of leading and trailing
+		 * whitespace, and validated by rules laid out in private method {@code HumanResourcesModelValidator.validateEmail(String)}, and if valid, the leading
+		 * and trailing whitespace is trimmed and the email parameter is returned
 		 * 
-		 * @param email the email to set
-		 * @throws IllegalArgumentException if email is unsuccessfully validated by {@code EmailValidator.validateEmail(String)}
+		 * @param email
+		 * @throws IllegalArgumentException if email is unsuccessfully validated by {@code HumanResourcesModelValidator.validateEmail(String)}
 		 */
-		public static boolean email(String email) {
+		public static String email(String email) {
 			if (email == null || email.isBlank()) {
-				return false;
-			} else if (validateEmail(email)) {
-				return true;
+				return null;
+			} else if (validateEmail(email.trim())) {
+				return email.trim();
 			} else {
 				throw new IllegalArgumentException(PersonStrings.MSG_EMAIL_INVALID.get() + email);
 			}
 		}
 
 		/**
-		 * @param phoneNumber the phoneNumber to set
+		 * Validates a phoneNumber. If the phoneNumber parameter is null or a blank String, null is returned, otherwise the phoneNumber parameter is trimmed
+		 * of leading and trailing whitespace and returned
+		 * 
+		 * @param phoneNumber
 		 */
-		public static boolean phoneNumber(String phoneNumber) {
+		public static String phoneNumber(String phoneNumber) {
 			if (phoneNumber == null || phoneNumber.isBlank()) {
-				return false;
+				return null;
 			} else {
-				return true;
+				return phoneNumber.trim();
 			}
 		}
 
 		/**
-		 * @param baseHourlyRate the baseHourlyRate to set (in pence)
-		 * @throws IllegalArgumentException if hourly rate is set to below MINIMUM_WAGE const
+		 * Validates the hourlyRateInPence. The parameter must simply be greater or equal to {@code EmployeeNumbers.INT_MIN_WAGE.get()}, or an {@code IllegalArgumentException} is thrown
+		 * @param hourlyRateInPence 
+		 * @throws {@code IllegalArgumentException} if hourly rate is set to below {@code EmployeeNumber.MINIMUM_WAGE.get()}
 		 */
-		public static boolean hourlyRateInPence(int baseHourlyRate) throws IllegalArgumentException {
-			if (baseHourlyRate >= EmployeeNumbers.INT_MIN_WAGE.get()) {
-				return true;
+		public static int hourlyRateInPence(int hourlyRateInPence) throws IllegalArgumentException {
+			if (hourlyRateInPence >= EmployeeNumbers.INT_MIN_WAGE.get()) {
+				return hourlyRateInPence;
 			} else {
 				throw new IllegalArgumentException(String.format("Hourly rate cannot be set to below minimum wage. Minimum wage is £%.2f but specified Hourly Rate was £%.2f.",
-						(EmployeeNumbers.INT_MIN_WAGE.get() / 100.0), (baseHourlyRate / 100.0)));
+						(EmployeeNumbers.INT_MIN_WAGE.get() / 100.0), (hourlyRateInPence / 100.0)));
 			}
 		}
 
 		/**
+		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, or an {@code IllegalArgumentException} is thrown.
 		 * @param hoursPerWeek the hoursPerWeek to set
-		 * @throws IllegalArgumentException if hoursPerWeek is a negative number
+		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number.
 		 */
-		public static boolean weeklyHours(double hoursPerWeek) throws IllegalArgumentException {
+		public static double weeklyHours(double hoursPerWeek) throws IllegalArgumentException {
 			if (hoursPerWeek >= 0) {
-				return true;
+				return hoursPerWeek;
 			} else {
 				throw new IllegalArgumentException("Hours per week cannot be set to a negative value.");
 			}
