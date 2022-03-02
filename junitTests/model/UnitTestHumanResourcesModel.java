@@ -118,7 +118,7 @@ class UnitTestHumanResourcesModel {
 	@Test
 	void testConstructor_Employee_Valid_AllArgs() {
 		assertEquals(nameValid1, employee.getForename());
-		assertEquals(nameValid2LowerCaseTrailingSpace, employee.getSurname());
+		assertEquals(nameValid2LowerCaseTrailingSpace.trim(), employee.getSurname());
 		assertEquals(emailValid1, employee.getEmail());
 		assertEquals(phoneNumberValid1, employee.getPhoneNumber());
 		assertEquals(hourlyRateInPenceValid2, employee.getHourlyRate());

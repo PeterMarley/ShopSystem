@@ -93,7 +93,7 @@ public class ModelEnums {
 	 * @GitHub https://github.com/PeterMarley
 	 *
 	 */
-	public enum EmployeeStrings {
+	public enum EmployeeMessages {
 		MSG_HOURLY_RATE_INVALID("HREmployee Constructor: Specified hourly rate is invalid "),
 		MSG_HOURS_PER_WEEK_INVALID("HREmployee Constructor: specified hoursPerWeek was a negative number"),
 		MSG_DATE_OF_START_NULL("HREmployee Constructor: Date of Employment Start was null"),
@@ -104,7 +104,7 @@ public class ModelEnums {
 
 		private String text;
 
-		private EmployeeStrings(String text) {
+		private EmployeeMessages(String text) {
 			this.text = text;
 		}
 

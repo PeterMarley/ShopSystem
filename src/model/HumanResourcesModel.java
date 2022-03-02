@@ -12,7 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.LocalDateStringConverter;
 import model.ModelEnums.Categories;
 import model.ModelEnums.EmployeeNumbers;
-import model.ModelEnums.EmployeeStrings;
+import model.ModelEnums.EmployeeMessages;
 import model.ModelEnums.PersonStrings;
 import model.StockItemModel.AbstractStockItem;
 
@@ -243,7 +243,7 @@ public class HumanResourcesModel {
 		 * @throws IllegalArgumentException if parameter is less than {@code EmployeeNumbers.MINIMUM_WAGE.get()}
 		 */
 		public void setHourlyRate(int hourlyRateInPence) throws IllegalArgumentException {
-				this.hourlyRateInPence = HumanResourcesModelValidator.hourlyRateInPence(hourlyRateInPence);
+			this.hourlyRateInPence = HumanResourcesModelValidator.hourlyRateInPence(hourlyRateInPence);
 		}
 
 		/**
@@ -265,7 +265,7 @@ public class HumanResourcesModel {
 		 * @throws IllegalArgumentException if {@code hoursPerWeek} is a negative number
 		 */
 		public void setHoursPerWeek(double hoursPerWeek) throws IllegalArgumentException {
-				this.hoursPerWeek = HumanResourcesModelValidator.weeklyHours(hoursPerWeek);
+			this.hoursPerWeek = HumanResourcesModelValidator.weeklyHours(hoursPerWeek);
 		}
 
 		/**
@@ -287,8 +287,7 @@ public class HumanResourcesModel {
 		 * @throws IllegalArgumentException if dateTime is null
 		 */
 		void setStartDate(LocalDate startDate) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.startDate(startDate))
-				this.startDate = startDate;
+			this.startDate = HumanResourcesModelValidator.startDate(startDate);
 		}
 
 		/**
@@ -310,8 +309,7 @@ public class HumanResourcesModel {
 		 * @throws IllegalArgumentException if endDate is chronologically before {@code this.dateOfEmploymentStart}
 		 */
 		void setEndDate(LocalDate endDate) throws IllegalArgumentException {
-			if (HumanResourcesModelValidator.endDate(this.startDate, endDate))
-				this.endDate = endDate;
+				this.endDate = HumanResourcesModelValidator.endDate(this.startDate, endDate);
 		}
 
 		///////////////////////////
@@ -339,9 +337,9 @@ public class HumanResourcesModel {
 					addSingleShift(key, shiftsToAdd.get(key));
 				}
 			} else if (shiftsToAdd == null) {
-				throw new IllegalArgumentException(EmployeeStrings.MSG_SHIFTS_NULL.get());
+				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_NULL.get());
 			} else {
-				throw new IllegalArgumentException(EmployeeStrings.MSG_SHIFTS_EMPTY.get());
+				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_EMPTY.get());
 			}
 		}
 
@@ -356,7 +354,7 @@ public class HumanResourcesModel {
 			if (date != null && hours != null && hours > 0) {
 				this.shifts.put(date, hours);
 			} else {
-				throw new IllegalArgumentException(EmployeeStrings.MSG_SHIFTS_ADD_SINGLE_FAILED.get() + " [Date=" + ((date == null) ? "null" : date) +
+				throw new IllegalArgumentException(EmployeeMessages.MSG_SHIFTS_ADD_SINGLE_FAILED.get() + " [Date=" + ((date == null) ? "null" : date) +
 						" hours=" + ((hours == null) ? "null" : hours) + "] for Employee " + super.getForename());
 			}
 
@@ -625,6 +623,7 @@ public class HumanResourcesModel {
 		 */
 		public static String name(String name) throws IllegalArgumentException {
 			if (name != null && !name.isBlank()) {
+				name = name.trim();
 				boolean charsValidated = true;
 				for (char c : name.toCharArray()) {
 					if (!NAME_CHARS.contains(String.format("%c", c))) {
@@ -635,8 +634,12 @@ public class HumanResourcesModel {
 				if (charsValidated && name.contains("-".repeat(2))) {
 					charsValidated = false;
 				}
-				if (charsValidated) {
-					return name.trim();
+				if (charsValidated && name.length() >= 2) {
+					name = name.toLowerCase().trim();
+					name = name.toUpperCase().charAt(0) + name.substring(1, name.length());
+					return name;
+				} else if (name.length()<2){
+					throw new IllegalArgumentException("Name must be at least 2 characters long");
 				} else {
 					throw new IllegalArgumentException(PersonStrings.MSG_NAME_INVALID_CHARS.get());
 				}
@@ -680,8 +683,10 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Validates the hourlyRateInPence. The parameter must simply be greater or equal to {@code EmployeeNumbers.INT_MIN_WAGE.get()}, or an {@code IllegalArgumentException} is thrown
-		 * @param hourlyRateInPence 
+		 * Validates the hourlyRateInPence. The parameter must simply be greater or equal to {@code EmployeeNumbers.INT_MIN_WAGE.get()}, or an
+		 * {@code IllegalArgumentException} is thrown
+		 * 
+		 * @param hourlyRateInPence
 		 * @throws {@code IllegalArgumentException} if hourly rate is set to below {@code EmployeeNumber.MINIMUM_WAGE.get()}
 		 */
 		public static int hourlyRateInPence(int hourlyRateInPence) throws IllegalArgumentException {
@@ -695,6 +700,7 @@ public class HumanResourcesModel {
 
 		/**
 		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, or an {@code IllegalArgumentException} is thrown.
+		 * 
 		 * @param hoursPerWeek the hoursPerWeek to set
 		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number.
 		 */
@@ -707,14 +713,16 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * @param startDateTime the dateOfEmploymentStart to set
-		 * @throws IllegalArgumentException if dateTime is null
+		 * Validates the startDate parameter. If it is not {@code null}, it is returned, if it is {@code null} an {@code IllegalArgumentException} is thrown
+		 * 
+		 * @param startDate the {@code startDate} to set
+		 * @throws IllegalArgumentException if {@code startDate} is null
 		 */
-		public static boolean startDate(LocalDate startDateTime) throws IllegalArgumentException {
-			if (startDateTime != null) {
-				return true;
+		public static LocalDate startDate(LocalDate startDate) throws IllegalArgumentException {
+			if (startDate != null) {
+				return startDate;
 			} else {
-				throw new IllegalArgumentException("Start date and time cannot be set to null.");
+				throw new IllegalArgumentException("Start date cannot be set to null.");
 			}
 		}
 
@@ -722,11 +730,11 @@ public class HumanResourcesModel {
 		 * @param endDate the dateOfEmploymentEnd to set
 		 * @throws IllegalArgumentException if endDate is chronologically before {@code this.dateOfEmploymentStart}
 		 */
-		public static boolean endDate(LocalDate startDate, LocalDate endDate) throws IllegalArgumentException {
-			if (endDate == null || (endDate != null && !endDate.isBefore(startDate))) {
-				return true;
+		public static LocalDate endDate(LocalDate startDate, LocalDate endDate) throws IllegalArgumentException {
+			if (endDate == null || (endDate != null && startDate != null && !endDate.isBefore(startDate))) {
+				return endDate;
 			} else {
-				throw new IllegalArgumentException(EmployeeStrings.MSG_DATE_OF_END_IMPOSSIBLE.get());
+				throw new IllegalArgumentException(EmployeeMessages.MSG_DATE_OF_END_IMPOSSIBLE.get());
 			}
 
 		}
