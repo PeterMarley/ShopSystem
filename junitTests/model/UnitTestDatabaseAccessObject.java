@@ -8,15 +8,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import model.HumanResourcesModel.Employee;
+
 class UnitTestDatabaseAccessObject {
 
 	private static DatabaseAccessObject dao;
+	private static final String TEST_DB = "test.db";
+	private static final String TEST_DB_REL_JUNIT = "jdbc:sqlite:./junitTests/model/";
+	private static final String TEST_DB_REL_SRC = "jdbc:sqlite:../../junitTests/model/";
 	private static Connection con = null;
 
 	/**
@@ -41,7 +48,7 @@ class UnitTestDatabaseAccessObject {
 		if (con == null) {
 			try {
 				Class.forName("org.sqlite.JDBC");
-				con = DriverManager.getConnection("jdbc:sqlite:./junitTests/model/test.db");
+				con = DriverManager.getConnection(TEST_DB_REL_JUNIT + TEST_DB);
 			} catch (ClassNotFoundException | SQLException e) {
 				System.out.println("getConnection() exception!");
 			}
@@ -150,11 +157,18 @@ class UnitTestDatabaseAccessObject {
 			System.out.println("@AfterAll complete");
 		} catch (SQLException e) {
 			System.err.println("@AfterAll failed!");
+			System.err.println(e.getMessage());
 		}
 	}
 
 	@BeforeEach
 	void setUp() throws Exception {
+		dao = new DatabaseAccessObject(TEST_DB_REL_SRC + TEST_DB);
+	}
+	
+	@AfterEach
+	void closeCon() {
+		dao.closeConnection();
 	}
 
 	@Test
@@ -178,6 +192,12 @@ class UnitTestDatabaseAccessObject {
 			e.printStackTrace();
 			fail("SQLException thrown in testTablesExist()!");
 		}
+	}
+	
+	@Test
+	void testEmployeeAddedInBeforeAll() {
+		ArrayList<Employee> employees = dao.getEmployees();
+		assertNotNull(employees);
 	}
 
 	//	@Test

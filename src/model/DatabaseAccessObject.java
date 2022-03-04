@@ -6,7 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javafx.util.converter.LocalDateStringConverter;
 import model.HumanResourcesModel.Employee;
@@ -25,6 +29,7 @@ class DatabaseAccessObject {
 
 	private String dbFilepath;
 	private LocalDateStringConverter DATE_CONVERTER = new LocalDateStringConverter();
+	private DateTimeFormatter DATE_FORMATTER;
 	private final HumanResourcesModel model = new HumanResourcesModel();
 
 	/**
@@ -35,6 +40,13 @@ class DatabaseAccessObject {
 	public DatabaseAccessObject(String databaseFilepath) throws SQLException {
 		this.setDatabaseLocation(databaseFilepath);
 		this.DATE_CONVERTER = new LocalDateStringConverter();
+		this.DATE_FORMATTER = new DateTimeFormatterBuilder()
+				// case insensitive to parse JAN and FEB
+				.parseCaseInsensitive()
+				// add pattern
+				.appendPattern("dd-MM-yyyy")
+				// create formatter (use English Locale to parse month names)
+				.toFormatter(Locale.ENGLISH);
 	}
 
 	/**
@@ -47,6 +59,15 @@ class DatabaseAccessObject {
 		System.out.println("Model: Database connection valid! @ " + dbFilepath);
 		connection.close();
 		this.dbFilepath = dbFilepath;
+	}
+
+	public void closeConnection() {
+		try {
+			getConnection().close();
+		} catch (SQLException e) {
+			System.err.println("Model: DAO connection close threw SQLException!");
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/**
@@ -117,6 +138,8 @@ class DatabaseAccessObject {
 			addEmployeeStatement.setString(3, DATE_CONVERTER.toString(e.getStartDateAsLocalDate()));
 			addEmployeeStatement.setInt(4, personID);
 			addEmployeeStatement.executeUpdate();
+			LocalDate.parse(text, DATE_FORMATTER);
+			LocalDate.
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
