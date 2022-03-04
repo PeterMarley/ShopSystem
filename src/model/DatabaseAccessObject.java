@@ -29,8 +29,8 @@ import model.HumanResourcesModel.Person;
 class DatabaseAccessObject {
 
 	private String dbFilepath;
-	private DateTimeFormatter DATE_FORMATTER;
-	private final HumanResourcesModel model = new HumanResourcesModel();
+	private final DateTimeFormatter DATE_FORMATTER;
+	private final HumanResourcesModel MODEL;
 
 	/**
 	 * Construct DataBaseAccessObject.
@@ -39,7 +39,10 @@ class DatabaseAccessObject {
 	 */
 	public DatabaseAccessObject(String databaseFilepath) throws SQLException {
 		this.setDatabaseLocation(databaseFilepath);
-		this.DATE_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd-MM-yyyy").toFormatter(Locale.ENGLISH);
+		this.MODEL = new HumanResourcesModel();
+		this.DATE_FORMATTER = new DateTimeFormatterBuilder()
+				.appendPattern("dd-MM-yyyy")
+				.toFormatter(Locale.ENGLISH);
 	}
 
 	/**
@@ -48,9 +51,10 @@ class DatabaseAccessObject {
 	 * @param dbFilepath
 	 */
 	private void setDatabaseLocation(String dbFilepath) throws SQLException {
+		DateTimeFormatter f = new DateTimeFormatterBuilder().appendPattern("dd-MM-yy HH:mm:ss.SS").toFormatter();
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
-		System.out.println("Model: Database connection valid! (" + LocalDateTime.now() + ")@ " + dbFilepath);
-		connection.close();
+		System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it to pool! @ " + LocalDateTime.now().format(f) + " (DB: " + dbFilepath + ")");
+		closeQuietly(connection);
 		this.dbFilepath = dbFilepath;
 	}
 
@@ -94,7 +98,7 @@ class DatabaseAccessObject {
 			resultSet = getEmployeesStatement.getResultSet();
 			// process results
 			while (resultSet.next()) {
-				employees.add(model.new Employee(
+				employees.add(MODEL.new Employee(
 						resultSet.getString("forename"),
 						resultSet.getString("surname"),
 						resultSet.getString("email"),
@@ -228,20 +232,6 @@ class DatabaseAccessObject {
 	}
 
 	/**
-	 * Try to close an SQL PreparedStatement objecgt, if it is not null
-	 * 
-	 * @param ps
-	 */
-	private void closeQuietly(PreparedStatement ps) {
-		if (ps != null) {
-			try {
-				ps.close();
-			} catch (SQLException e) {
-			}
-		}
-	}
-
-	/**
 	 * Try to close SQL Statement, ResultSet, and Connection objects, if they are not null
 	 * 
 	 * @param statement
@@ -254,17 +244,4 @@ class DatabaseAccessObject {
 		closeQuietly(statement);
 		closeQuietly(connection);
 	}
-
-	//	/**
-	//	 * Try to close SQL PreparedStatement, ResultSet, and Connection objects, if they are not null
-	//	 * 
-	//	 * @param preparedStatement
-	//	 * @param resultSet
-	//	 * @param connection
-	//	 */
-	//	private void closeQuietly(PreparedStatement preparedStatement, ResultSet resultSet, Connection connection) {
-	//		closeQuietly(preparedStatement);
-	//		closeQuietly(resultSet);
-	//		closeQuietly(connection);
-	//	}
 }
