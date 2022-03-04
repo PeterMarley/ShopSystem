@@ -29,8 +29,18 @@ import model.HumanResourcesModel.Person;
 class DatabaseAccessObject {
 
 	private String dbFilepath;
+	/**
+	 * Date to text operations
+	 */
 	private final DateTimeFormatter DATE_FORMATTER;
+	/**
+	 * All Human Resources classes
+	 */
 	private final HumanResourcesModel MODEL;
+
+	
+	private final String[] personColumns;
+	private final String[] employeeColumns;
 
 	/**
 	 * Construct DataBaseAccessObject.
@@ -43,17 +53,20 @@ class DatabaseAccessObject {
 		this.DATE_FORMATTER = new DateTimeFormatterBuilder()
 				.appendPattern("dd-MM-yyyy")
 				.toFormatter(Locale.ENGLISH);
+		this.personColumns = new String[] { "forename", "surname", "email", "phoneNumber" };
+		this.employeeColumns = new String[] { "hourlyRateInPence, hoursPerWeek", "startDate", "endDate" };
 	}
 
 	/**
-	 * Sets the database relative filepath
+	 * Sets the database relative filepath, and tests if a Connection can be established
 	 * 
 	 * @param dbFilepath
 	 */
 	private void setDatabaseLocation(String dbFilepath) throws SQLException {
 		DateTimeFormatter f = new DateTimeFormatterBuilder().appendPattern("dd-MM-yy HH:mm:ss.SS").toFormatter();
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
-		System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it to pool! @ " + LocalDateTime.now().format(f) + " (DB: " + dbFilepath + ")");
+		System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
+				"to pool! @ " + LocalDateTime.now().format(f) + " (DB: " + dbFilepath + ")");
 		closeQuietly(connection);
 		this.dbFilepath = dbFilepath;
 	}
@@ -106,7 +119,7 @@ class DatabaseAccessObject {
 						LocalDate.parse(resultSet.getString("endDate"), DATE_FORMATTER)));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.err.println("DAO: getEmployees() failed");
 		} finally {
 			closeQuietly(resultSet, getEmployeesStatement, connection);
 		}
@@ -114,7 +127,8 @@ class DatabaseAccessObject {
 	}
 
 	/**
-	 * Adds a {@code Employee} to database in {@code person} {@code employee} tables, linking the employee to the person via the {@code person.personID}
+	 * Adds an {@code Employee} to database in tables {@code person} and {@code employee}, linking the employee to the person via the
+	 * {@code person.personID}
 	 * primary key
 	 * 
 	 * @param e a Employee
