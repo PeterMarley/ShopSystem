@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import model.HumanResourcesModel.Person;
 class DatabaseAccessObject {
 
 	private String dbFilepath;
-	private LocalDateStringConverter DATE_CONVERTER = new LocalDateStringConverter();
 	private DateTimeFormatter DATE_FORMATTER;
 	private final HumanResourcesModel model = new HumanResourcesModel();
 
@@ -39,14 +39,7 @@ class DatabaseAccessObject {
 	 */
 	public DatabaseAccessObject(String databaseFilepath) throws SQLException {
 		this.setDatabaseLocation(databaseFilepath);
-		this.DATE_CONVERTER = new LocalDateStringConverter();
-		this.DATE_FORMATTER = new DateTimeFormatterBuilder()
-				// case insensitive to parse JAN and FEB
-				.parseCaseInsensitive()
-				// add pattern
-				.appendPattern("dd-MM-yyyy")
-				// create formatter (use English Locale to parse month names)
-				.toFormatter(Locale.ENGLISH);
+		this.DATE_FORMATTER = new DateTimeFormatterBuilder().appendPattern("dd-MM-yyyy").toFormatter(Locale.ENGLISH);
 	}
 
 	/**
@@ -56,7 +49,7 @@ class DatabaseAccessObject {
 	 */
 	private void setDatabaseLocation(String dbFilepath) throws SQLException {
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
-		System.out.println("Model: Database connection valid! @ " + dbFilepath);
+		System.out.println("Model: Database connection valid! (" + LocalDateTime.now() + ")@ " + dbFilepath);
 		connection.close();
 		this.dbFilepath = dbFilepath;
 	}
@@ -90,24 +83,31 @@ class DatabaseAccessObject {
 	 */
 	public ArrayList<Employee> getEmployees() {
 		ArrayList<Employee> employees = new ArrayList<Employee>();
+		Connection connection = null;
+		Statement getEmployeesStatement = null;
+		ResultSet resultSet = null;
 		try {
-			Statement statement = getConnection().createStatement();
-			statement.execute("Select * FROM person INNER JOIN employee ON employee.personID=person.personID;");
-			ResultSet results = statement.getResultSet();
-			while (results.next()) {
+			// configure SQL objects
+			connection = getConnection();
+			getEmployeesStatement = connection.createStatement();
+			getEmployeesStatement.execute("Select * FROM person INNER JOIN employee ON employee.personID=person.personID;");
+			resultSet = getEmployeesStatement.getResultSet();
+			// process results
+			while (resultSet.next()) {
 				employees.add(model.new Employee(
-						results.getString("forename"),
-						results.getString("surname"),
-						results.getString("email"),
-						results.getString("phoneNumber"),
-						results.getInt("hourlyRateInPence"),
-						results.getDouble("hoursPerWeek"),
-						DATE_CONVERTER.fromString(results.getString("startDate")),
-						DATE_CONVERTER.fromString(results.getString("endDate"))));
+						resultSet.getString("forename"),
+						resultSet.getString("surname"),
+						resultSet.getString("email"),
+						resultSet.getString("phoneNumber"),
+						resultSet.getInt("hourlyRateInPence"),
+						resultSet.getDouble("hoursPerWeek"),
+						LocalDate.parse(resultSet.getString("startDate"), DATE_FORMATTER),
+						LocalDate.parse(resultSet.getString("endDate"), DATE_FORMATTER)));
 			}
-			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			closeQuietly(resultSet, getEmployeesStatement, connection);
 		}
 		return employees;
 	}
@@ -119,29 +119,37 @@ class DatabaseAccessObject {
 	 * @param e a Employee
 	 */
 	public void addEmployee(Employee e) {
+		Connection connection = null;
+		PreparedStatement addEmployeeStatement = null;
 		try {
-			int personID = addPerson(e);
-			PreparedStatement addEmployeeStatement = null;
+			// add person superclass fields to database, and return the primary key (personID) - to be used as a foreign key
+			int foreignKey = addPerson(e);
+
+			// configure SQL objects
+			connection = getConnection();
 			if (e.getEndDateAsLocalDate() == null) {
-				addEmployeeStatement = getConnection().prepareStatement(
+				addEmployeeStatement = connection.prepareStatement(
 						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,startDate,personID)" +
 								" VALUES (?,?,?,?);");
 			} else {
-				addEmployeeStatement = getConnection().prepareStatement(
+				addEmployeeStatement = connection.prepareStatement(
 						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,startDate,personID,endDate)" +
 								" VALUES (?,?,?,?,?);");
-				addEmployeeStatement.setString(5, DATE_CONVERTER.toString(e.getEndDateAsLocalDate()));
+				addEmployeeStatement.setString(5, e.getEndDateAsLocalDate().format(DATE_FORMATTER));
 
 			}
 			addEmployeeStatement.setInt(1, e.getHourlyRate());
 			addEmployeeStatement.setDouble(2, e.getHoursPerWeek());
-			addEmployeeStatement.setString(3, DATE_CONVERTER.toString(e.getStartDateAsLocalDate()));
-			addEmployeeStatement.setInt(4, personID);
+			addEmployeeStatement.setString(3, e.getStartDateAsLocalDate().format(DATE_FORMATTER));
+			addEmployeeStatement.setInt(4, foreignKey);
+
+			// add employee to database
 			addEmployeeStatement.executeUpdate();
-			LocalDate.parse(text, DATE_FORMATTER);
-			LocalDate.
 		} catch (SQLException e1) {
 			e1.printStackTrace();
+		} finally {
+			// close SQL objects quietly
+			closeQuietly(null, addEmployeeStatement, connection);
 		}
 	}
 
@@ -150,18 +158,113 @@ class DatabaseAccessObject {
 	 * 
 	 * @param p a Person object
 	 * @return the new person row's primary key (named personID)
-	 * @throws SQLException if getConnection() fails
+	 * @throws SQLException from getConnection() if method fails
 	 */
 	private int addPerson(Person p) throws SQLException {
-		String sql = "INSERT INTO person (forename,surname,email,phonenumber) VALUES(?,?,?,?);";
-		PreparedStatement addPersonStatement = getConnection().prepareStatement(sql);
+		// configure SQL objects
+		Connection con = getConnection();
+		PreparedStatement addPersonStatement = con.prepareStatement("INSERT INTO person (forename,surname,email,phonenumber) VALUES(?,?,?,?);");
+
+		// add person to database
 		addPersonStatement.setString(1, p.getForename());
 		addPersonStatement.setString(2, p.getSurname());
 		addPersonStatement.setString(3, p.getEmail());
 		addPersonStatement.setString(4, p.getPhoneNumber());
 		addPersonStatement.executeUpdate();
 		ResultSet rs = addPersonStatement.getGeneratedKeys();
-		return rs.getInt(1);
+		int key = rs.getInt(1);
+
+		// close SQL objects quietly
+		closeQuietly(rs, addPersonStatement, con);
+
+		// return personID of the new row
+		return key;
 	}
 
+	///////////////////////////////////////
+	// Quiet Close overloaded methods	//
+	/////////////////////////////////////
+
+	/**
+	 * Try to close an SQL connection object, if it is not null.
+	 * 
+	 * @param connection
+	 */
+	private void closeQuietly(Connection connection) {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	/**
+	 * Try to close an SQL statement object, if it is not null
+	 * 
+	 * @param statement
+	 */
+	private void closeQuietly(Statement statement) {
+		if (statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	/**
+	 * Try to close an SQL ResultSet object, if it is not null
+	 * 
+	 * @param resultSet
+	 */
+	private void closeQuietly(ResultSet resultSet) {
+		if (resultSet != null) {
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	/**
+	 * Try to close an SQL PreparedStatement objecgt, if it is not null
+	 * 
+	 * @param ps
+	 */
+	private void closeQuietly(PreparedStatement ps) {
+		if (ps != null) {
+			try {
+				ps.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
+
+	/**
+	 * Try to close SQL Statement, ResultSet, and Connection objects, if they are not null
+	 * 
+	 * @param statement
+	 * @param resultSet
+	 * @param connection
+	 */
+	private void closeQuietly(ResultSet resultSet, Statement statement, Connection connection) {
+		// safe order: ResultSet > Statement > Connection
+		closeQuietly(resultSet);
+		closeQuietly(statement);
+		closeQuietly(connection);
+	}
+
+	//	/**
+	//	 * Try to close SQL PreparedStatement, ResultSet, and Connection objects, if they are not null
+	//	 * 
+	//	 * @param preparedStatement
+	//	 * @param resultSet
+	//	 * @param connection
+	//	 */
+	//	private void closeQuietly(PreparedStatement preparedStatement, ResultSet resultSet, Connection connection) {
+	//		closeQuietly(preparedStatement);
+	//		closeQuietly(resultSet);
+	//		closeQuietly(connection);
+	//	}
 }
