@@ -74,10 +74,7 @@ class DatabaseAccessObject {
 	 * @throws SQLException if database access error occurs
 	 */
 	private Connection getConnection() throws SQLException {
-		Connection connection = null;
-		String url = "jdbc:sqlite:" + dbFilepath;
-		connection = DriverManager.getConnection(url);
-		return connection;
+		return DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
 	}
 
 	/**
