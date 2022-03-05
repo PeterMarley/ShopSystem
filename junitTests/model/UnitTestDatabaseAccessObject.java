@@ -27,76 +27,11 @@ class UnitTestDatabaseAccessObject {
 	private static final String TEST_DB = "test.db";
 	private static final String TEST_DB_REL_JUNIT = "jdbc:sqlite:./junitTests/model/";
 	private static final String TEST_DB_REL_SRC = "jdbc:sqlite:../../junitTests/model/";
-	private static Connection con = null;
 	private static HumanResourcesModel model = new HumanResourcesModel();
 
-	/**
-	 * Drop the following tables from database:<br>
-	 * - employee<br>
-	 * - person
-	 * 
-	 * @throws SQLException
-	 */
-	private static void dropTables() throws SQLException {
-		// configure SQL objects
-		Connection con = getConnection();
-		Statement s = con.createStatement();
-		// drop person and employee tables from database
-		s.execute("DROP TABLE person;");
-		s.execute("DROP TABLE employee;");
-		// close SQL objects
-		closeQuietly(null, s, con);
-	}
+	private static Employee[] employees;
 
-	/**
-	 * Get an sqlite3 connection safely
-	 * 
-	 * @return Connection object
-	 * @throws SQLException
-	 */
-	private static Connection getConnection() throws SQLException {
-		//		if (con == null) {
-		//			try {
-		//				Class.forName("org.sqlite.JDBC");
-		//				con = DriverManager.getConnection(TEST_DB_REL_JUNIT + TEST_DB);
-		//			} catch (ClassNotFoundException | SQLException e) {
-		//				System.out.println("getConnection() exception!");
-		//			}
-		//		}
-		//		return con;
-		if (con == null || (con != null && con.isClosed())) {
-			con = DriverManager.getConnection(TEST_DB_REL_JUNIT + TEST_DB);
-		}
-		return con;
-	}
-
-	/**
-	 * A method to close all SQL objects quietly and safely
-	 * 
-	 * @param resultSet
-	 * @param statement
-	 * @param connection
-	 */
-	private static void closeQuietly(ResultSet resultSet, Statement statement, Connection connection) {
-		if (resultSet != null) {
-			try {
-				resultSet.close();
-			} catch (SQLException e) {
-			}
-		}
-		if (statement != null) {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-			}
-		}
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-			}
-		}
-	}
+	private Employee employee;
 
 	/**
 	 * Create person and employee tables, populate with 1 row, and check success of operation.
@@ -275,13 +210,13 @@ class UnitTestDatabaseAccessObject {
 
 	@AfterEach
 	void afterEach() {
-		dao.closeConnection();
 	}
 
 	@Test
 	void testEmployeeAddedInBeforeAll() {
 		ArrayList<Employee> employees = dao.getEmployees();
 		assertNotNull(employees);
+		assertEquals(1, employees.size());
 	}
 
 	//	@Test
@@ -298,4 +233,74 @@ class UnitTestDatabaseAccessObject {
 	//		}
 	//	}
 
+	/**
+	 * Drop the following tables from database:<br>
+	 * - employee<br>
+	 * - person
+	 * 
+	 * @throws SQLException
+	 */
+	private static void dropTables() throws SQLException {
+		// configure SQL objects
+		Connection con = getConnection();
+		Statement s = con.createStatement();
+		// drop person and employee tables from database
+		s.execute("DROP TABLE person;");
+		s.execute("DROP TABLE employee;");
+		// close SQL objects
+		closeQuietly(null, s, con);
+	}
+
+	/**
+	 * Get an sqlite3 connection safely
+	 * 
+	 * @return Connection object
+	 * @throws SQLException
+	 */
+	private static Connection getConnection() throws SQLException {
+		//		if (con == null) {
+		//			try {
+		//				Class.forName("org.sqlite.JDBC");
+		//				con = DriverManager.getConnection(TEST_DB_REL_JUNIT + TEST_DB);
+		//			} catch (ClassNotFoundException | SQLException e) {
+		//				System.out.println("getConnection() exception!");
+		//			}
+		//		}
+		//		return con;
+		
+		//		try {
+		//			Class.forName("org.sqlite.JDBC");
+		//		} catch (ClassNotFoundException e) {
+		//			e.printStackTrace();
+		//		}
+		return DriverManager.getConnection(TEST_DB_REL_JUNIT + TEST_DB);
+	}
+
+	/**
+	 * A method to close all SQL objects quietly and safely
+	 * 
+	 * @param resultSet
+	 * @param statement
+	 * @param connection
+	 */
+	private static void closeQuietly(ResultSet resultSet, Statement statement, Connection connection) {
+		if (resultSet != null) {
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+			}
+		}
+		if (statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+			}
+		}
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+			}
+		}
+	}
 }

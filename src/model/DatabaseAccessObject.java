@@ -32,15 +32,12 @@ class DatabaseAccessObject {
 	/**
 	 * Date to text operations
 	 */
-	private final DateTimeFormatter DATE_FORMATTER;
+	private final DateTimeFormatter FORMAT_DATE;
+	private final DateTimeFormatter FORMAT_DATE_TIME;
 	/**
 	 * All Human Resources classes
 	 */
 	private final HumanResourcesModel MODEL;
-
-	
-	private final String[] personColumns;
-	private final String[] employeeColumns;
 
 	/**
 	 * Construct DataBaseAccessObject.
@@ -48,13 +45,15 @@ class DatabaseAccessObject {
 	 * @param databaseFilepath - the relative filepath to the sqlite3 database
 	 */
 	public DatabaseAccessObject(String databaseFilepath) throws SQLException {
-		this.setDatabaseLocation(databaseFilepath);
-		this.MODEL = new HumanResourcesModel();
-		this.DATE_FORMATTER = new DateTimeFormatterBuilder()
+		initDAO(databaseFilepath);
+		MODEL = new HumanResourcesModel();
+		FORMAT_DATE = new DateTimeFormatterBuilder()
 				.appendPattern("dd-MM-yyyy")
 				.toFormatter(Locale.ENGLISH);
-		this.personColumns = new String[] { "forename", "surname", "email", "phoneNumber" };
-		this.employeeColumns = new String[] { "hourlyRateInPence, hoursPerWeek", "startDate", "endDate" };
+		FORMAT_DATE_TIME = new DateTimeFormatterBuilder()
+				.appendPattern("dd-MM-yy HH:mm:ss.SS")
+				.toFormatter();
+
 	}
 
 	/**
@@ -62,22 +61,12 @@ class DatabaseAccessObject {
 	 * 
 	 * @param dbFilepath
 	 */
-	private void setDatabaseLocation(String dbFilepath) throws SQLException {
-		DateTimeFormatter f = new DateTimeFormatterBuilder().appendPattern("dd-MM-yy HH:mm:ss.SS").toFormatter();
+	private void initDAO(String dbFilepath) throws SQLException {
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
 		System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
-				"to pool! @ " + LocalDateTime.now().format(f) + " (DB: " + dbFilepath + ")");
+				"to pool! @ " + LocalDateTime.now().format(FORMAT_DATE_TIME) + " (DB: " + dbFilepath + ")");
 		closeQuietly(connection);
 		this.dbFilepath = dbFilepath;
-	}
-
-	public void closeConnection() {
-		try {
-			getConnection().close();
-		} catch (SQLException e) {
-			System.err.println("Model: DAO connection close threw SQLException!");
-			System.out.println(e.getMessage());
-		}
 	}
 
 	/**
@@ -89,6 +78,10 @@ class DatabaseAccessObject {
 	private Connection getConnection() throws SQLException {
 		return DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
 	}
+
+	///////////////////////////////////////
+	// SELECT							//
+	/////////////////////////////////////
 
 	/**
 	 * Queries the sqlite3 database for all employee data and constructs an {@code ArrayList<Employee>} with all employees
@@ -115,8 +108,8 @@ class DatabaseAccessObject {
 						resultSet.getString("phoneNumber"),
 						resultSet.getInt("hourlyRateInPence"),
 						resultSet.getDouble("hoursPerWeek"),
-						LocalDate.parse(resultSet.getString("startDate"), DATE_FORMATTER),
-						LocalDate.parse(resultSet.getString("endDate"), DATE_FORMATTER)));
+						LocalDate.parse(resultSet.getString("startDate"), FORMAT_DATE),
+						LocalDate.parse(resultSet.getString("endDate"), FORMAT_DATE)));
 			}
 		} catch (SQLException e) {
 			System.err.println("DAO: getEmployees() failed");
@@ -125,6 +118,10 @@ class DatabaseAccessObject {
 		}
 		return employees;
 	}
+
+	///////////////////////////////////////
+	// INSERT							//
+	/////////////////////////////////////
 
 	/**
 	 * Adds an {@code Employee} to database in tables {@code person} and {@code employee}, linking the employee to the person via the
@@ -150,12 +147,12 @@ class DatabaseAccessObject {
 				addEmployeeStatement = connection.prepareStatement(
 						"INSERT INTO employee (hourlyRateInPence,hoursPerWeek,startDate,personID,endDate)" +
 								" VALUES (?,?,?,?,?);");
-				addEmployeeStatement.setString(5, e.getEndDateAsLocalDate().format(DATE_FORMATTER));
+				addEmployeeStatement.setString(5, e.getEndDateAsLocalDate().format(FORMAT_DATE));
 
 			}
 			addEmployeeStatement.setInt(1, e.getHourlyRate());
 			addEmployeeStatement.setDouble(2, e.getHoursPerWeek());
-			addEmployeeStatement.setString(3, e.getStartDateAsLocalDate().format(DATE_FORMATTER));
+			addEmployeeStatement.setString(3, e.getStartDateAsLocalDate().format(FORMAT_DATE));
 			addEmployeeStatement.setInt(4, foreignKey);
 
 			// add employee to database
