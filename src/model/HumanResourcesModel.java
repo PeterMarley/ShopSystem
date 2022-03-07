@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Objects;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -169,6 +170,23 @@ public class HumanResourcesModel {
 				}
 			}
 			return returnValue;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (!(obj instanceof Person))
+				return false;
+			Person other = (Person) obj;
+			return email.equals(other.email)
+					&& forename.equals(other.forename)
+					&& phoneNumber.equals(other.phoneNumber)
+					&& surname.equals(other.surname);
+		}
+
+		private HumanResourcesModel getEnclosingInstance() {
+			return HumanResourcesModel.this;
 		}
 
 	}
@@ -387,6 +405,28 @@ public class HumanResourcesModel {
 					", weeklyHours=" + this.getHoursPerWeek() +
 					", startDate=" + this.getStartDateAsLocalDate() +
 					", endDate=" + ((this.getEndDateAsLocalDate() == null) ? "Still Employed" : this.getEndDateAsLocalDate()) + "]";
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!super.equals(obj))
+				return false;
+			if (this == obj)
+				return true;
+			if (!super.equals(obj))
+				return false;
+			if (!(obj instanceof Employee))
+				return false;
+			Employee other = (Employee) obj;
+			return ((endDate != null) ? endDate.equals(other.endDate) : endDate == other.endDate)
+					&& hourlyRateInPence == other.hourlyRateInPence
+					&& hoursPerWeek == other.hoursPerWeek
+					&& startDate.equals(other.startDate)
+					&& Objects.equals(endDate, other.endDate);
+		}
+
+		private HumanResourcesModel getEnclosingInstance() {
+			return HumanResourcesModel.this;
 		}
 
 	}
@@ -702,10 +742,12 @@ public class HumanResourcesModel {
 		}
 
 		/**
-		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, and less than or equal to {@code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()}, or an {@code IllegalArgumentException} is thrown.
+		 * Validates the hoursPerWeek parameter. The parameter must simply be greater than or equal to 0, and less than or equal to
+		 * {@code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()}, or an {@code IllegalArgumentException} is thrown.
 		 * 
 		 * @param hoursPerWeek the hoursPerWeek to set
-		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number, or is greater than {@Code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()).
+		 * @throws {@code IllegalArgumentException}{@code IllegalArgumentException} if hoursPerWeek is a negative number, or is greater than
+		 * {@Code Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()).
 		 */
 		public static double hoursPerWeek(double hoursPerWeek) throws IllegalArgumentException {
 			if (hoursPerWeek >= 0 && hoursPerWeek <= Numbers.EMPLOYEE_MAX_WEEKLY_HOURS.get()) {
