@@ -2,6 +2,7 @@ package controller;
 
 import view.View;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -16,8 +17,8 @@ public class MainController {
 		try {
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
-		} catch (SQLException daoInstantiationException) {
-			System.err.println(daoInstantiationException.getMessage());
+		} catch (SQLException controllerInitException) {
+			System.err.println(controllerInitException.getMessage());
 		}
 		Application.launch(View.class);
 		

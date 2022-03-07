@@ -1,5 +1,7 @@
 package view.windows.humanresources;
 
+import java.io.IOException;
+
 import controller.MainController;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -11,7 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.HumanResourcesModel.Employee;
 
-public class HrController {
+public class ViewHumanResourcesController {
 	@FXML
 	private TableView<Employee> tableEmployee;
 	@FXML
@@ -60,9 +62,9 @@ public class HrController {
 		tableEmployee.setItems(employeesModelSorted);
 	}
 
-	public void addEmployee() {
+	public void addEmployee() throws IOException {
 		//MainController.getView().showHumanResourcesAddEmployee();
-		System.out.println("HrController.addEmployee() stub");
+		MainController.getView().getViewHumanResources().getEmployeeDetailAdd().getStage().show();
 	}
 
 	public void editEmployee() {

@@ -179,10 +179,10 @@ public class HumanResourcesModel {
 			if (!(obj instanceof Person))
 				return false;
 			Person other = (Person) obj;
-			return email.equals(other.email)
-					&& forename.equals(other.forename)
-					&& phoneNumber.equals(other.phoneNumber)
-					&& surname.equals(other.surname);
+			return (email != null) ? email.equals(other.email) : other.email == null
+							&& forename.equals(other.forename)
+							&& (phoneNumber != null ) ? phoneNumber.equals(other.phoneNumber) : other.phoneNumber == null
+							&& surname.equals(other.surname);
 		}
 
 		private HumanResourcesModel getEnclosingInstance() {

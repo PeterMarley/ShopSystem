@@ -12,10 +12,10 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import view.windows.AbstractView;
 
-public class Splash extends AbstractView {
+public class ViewSplash extends AbstractView {
 
-	public Splash() throws IOException {
-		super("Splash", "SASpm");
+	public ViewSplash() throws IOException {
+		super("ViewSplash.fxml","ViewSplash.css","../img/icon_splash.png", "SASpm", ControllerType.VIEW_SPLASH);
 		super.getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent e) {

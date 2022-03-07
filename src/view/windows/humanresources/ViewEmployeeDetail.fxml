@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="414.0" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" >
+   <children>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" styleClass="requiredField" text="Forename">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldForename" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" styleClass="requiredField" text="Surname">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldSurname" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" text="Email">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldEmail" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" text="Phone Number">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldPhoneNumber" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" styleClass="requiredField" text="Hourly Rate (in £)">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldHourlyRate" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" styleClass="requiredField" text="Weekly Hours">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="textFieldWeeklyHours" prefHeight="25.0" prefWidth="209.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" styleClass="requiredField" text="Start Date">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>
+            <DatePicker fx:id="datePickerStartDate" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="428.0">
+         <children>
+            <Label alignment="TOP_RIGHT" prefHeight="17.0" prefWidth="215.0" text="End Date">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </Label>   
+            <DatePicker fx:id="datePickerEndDate" />
+         </children>
+      </HBox>
+      <Label prefHeight="17.0" prefWidth="414.0" styleClass="requiredField" text="*Required Fields" />
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="414.0" spacing="20.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#employeeToDatabase" text="Add Employee" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+</VBox>

@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
 
-public class SplashController {
+public class ViewSplashController {
 
 	@FXML
 	private Button buttonHR;
@@ -16,7 +16,7 @@ public class SplashController {
 	private Button buttonPOS;
 
 	public void openHumanResources() {
-		MainController.getView().showHumanResources();
+		MainController.getView().getViewHumanResources().getStage().show();;
 	}
 
 	public void openPointOfSales() {
