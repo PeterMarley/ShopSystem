@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1116.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.windows.humanresources.HrController">
+  <tabs>
+    <Tab text="Employees">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tableEmployee" layoutX="70.0" layoutY="69.0" prefHeight="669.0" prefWidth="1005.0">
+                    <columns>
+                      <TableColumn fx:id="forename" prefWidth="75.0" text="Forename" />
+                      <TableColumn fx:id="surname" prefWidth="75.0" text="Surname" />
+                        <TableColumn fx:id="email" prefWidth="178.0" text="Email" />
+                        <TableColumn fx:id="phoneNumber" prefWidth="139.0" text="PhoneNumber" />
+                        <TableColumn fx:id="hourlyRate" prefWidth="85.0" text="Rate" />
+                        <TableColumn fx:id="weeklyHours" prefWidth="88.0" text="Hours" />
+                        <TableColumn fx:id="startDate" prefWidth="176.0" text="StartDate" />
+                        <TableColumn fx:id="endDate" prefWidth="171.0" text="EndDate" />
+                    </columns>
+                  </TableView>
+                  <Button layoutX="70.0" layoutY="27.0" mnemonicParsing="false" onAction="#fillTableEmployees" text="Refresh" />
+                  <Button layoutX="141.0" layoutY="27.0" mnemonicParsing="false" onAction="#addEmployee" text="Add Employee" />
+                  <Button layoutX="251.0" layoutY="27.0" mnemonicParsing="false" onAction="#editEmployee" text="Edit Employee" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Suppliers">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+      </content>
+    </Tab>
+      <Tab text="All People">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+      </Tab>
+  </tabs>
+</TabPane>

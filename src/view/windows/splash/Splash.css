@@ -1,0 +1,32 @@
+.root {
+	-fx-background-image: url(../img/splash_bg.jpg); 
+}
+
+#labelTitle {
+	-fx-text-fill: red;
+	-fx-font-size: 30;
+}
+
+#labelAuthor {
+	-fx-text-fill: blue;
+	-fx-font-size: 15;
+}
+
+.buttonIntro {
+	-fx-background-color:-fx-grey;
+	-fx-font-weight: bold;
+	-fx-background-radius: 5;
+	-fx-border-color: -fx-black;
+	-fx-border-radius: 5;
+	-fx-text-fill: white;
+}
+
+.buttonIntro:hover {
+	-fx-background-color:-fx-near-black;
+}
+
+.buttonDisabled {
+	-fx-background-color: grey;
+	-fx-text-fill: white;
+}
+

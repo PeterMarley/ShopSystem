@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.windows.splash.SplashController">
+   <children>
+      <Label fx:id="labelTitle" minWidth="-Infinity" prefHeight="30" prefWidth="600.0" text="Shop Administration System" />
+      <Label fx:id="labelAuthor" layoutY="30.0" minWidth="-Infinity" prefHeight="17" prefWidth="600.0" text="by Peter Marley" />
+      <Button fx:id="buttonHR" layoutX="134.0" layoutY="188.0" mnemonicParsing="false" onAction="#openHumanResources" prefWidth="150.0" styleClass="buttonIntro" text="Human Resources" />
+      <Button fx:id="buttonPOS" layoutX="319.0" layoutY="188.0" mnemonicParsing="false" onAction="#openPointOfSales" prefWidth="150.0" styleClass="buttonDisabled" text="Point of Sales" />
+   </children>
+</Pane>

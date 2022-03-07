@@ -1,0 +1,30 @@
+* {
+	-fx-white: "#ffffff";
+	-fx-blue: "#5866ef";
+	-fx-green: "3da560";
+	-fx-yellow: "#f9a62b";
+	-fx-red: "#ec4145";
+	-fx-lilac: "#9b84ec";
+	-fx-coral: "#f37b68";
+	-fx-turquoise: "49ddc1";
+	-fx-grey: "4f5d7e";
+	-fx-purple: "583694";
+	-fx-light-blue: "09b0f2";
+	-fx-dark-grey: "2f3136";
+	-fx-near-black: "23272a";
+	-fx-black: "000000";
+}
+
+.label {
+	-fx-alignment: center;
+	-fx-font-weight: bold;
+}
+
+.button {
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+
+.button:hover {
+	-fx-background-color: blue;
+}

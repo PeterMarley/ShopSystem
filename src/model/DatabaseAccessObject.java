@@ -56,7 +56,7 @@ import model.HumanResourcesModel.Person;
  * @GitHub https://github.com/PeterMarley
  *
  */
-class DatabaseAccessObject {
+public class DatabaseAccessObject {
 
 	private String dbFilepath;
 	/**
@@ -72,9 +72,9 @@ class DatabaseAccessObject {
 	/**
 	 * Construct DataBaseAccessObject.
 	 * 
-	 * @param databaseFilepath - the relative filepath to the sqlite3 database
+	 * @param databaseRelativeFilepath - the relative filepath to the sqlite3 database
 	 */
-	public DatabaseAccessObject(String databaseFilepath) throws SQLException {
+	public DatabaseAccessObject(String databaseRelativeFilepath) throws SQLException {
 
 		MODEL = new HumanResourcesModel();
 		FORMAT_OBJECT = new DateTimeFormatterBuilder()
@@ -84,7 +84,7 @@ class DatabaseAccessObject {
 				.appendPattern("dd-MM-yy HH:mm:ss.SS")
 				.toFormatter();
 
-		initDAO(databaseFilepath);
+		testConnection(databaseRelativeFilepath);
 
 	}
 
@@ -93,12 +93,12 @@ class DatabaseAccessObject {
 	 * 
 	 * @param dbFilepath
 	 */
-	private void initDAO(String dbFilepath) throws SQLException {
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
-		System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
-				"to pool! @ " + LocalDateTime.now().format(FORMAT_LOG) + " (DB: " + dbFilepath + ")");
-		closeQuietly(connection);
-		this.dbFilepath = dbFilepath;
+	private void testConnection(String dbFilepath) throws SQLException {
+		try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);) {
+			System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
+					"to pool! @ " + LocalDateTime.now().format(FORMAT_LOG) + " (DB: " + dbFilepath + ")");
+			this.dbFilepath = dbFilepath;
+		}
 	}
 
 	/**
@@ -145,7 +145,7 @@ class DatabaseAccessObject {
 									resultSet.getInt("hourlyRateInPence"),
 									resultSet.getDouble("hoursPerWeek"),
 									LocalDate.parse(resultSet.getString("startDate"), FORMAT_OBJECT),
-									(resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
+									( resultSet.getString("endDate") == null || resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
 						} catch (DateTimeException | IllegalArgumentException employeeReadException) {
 							System.err.println("DAO: date convertion exception " + employeeReadException.getClass());
 							System.err.println(employeeReadException.getMessage());
@@ -181,6 +181,7 @@ class DatabaseAccessObject {
 
 			// try-with-resources Connection
 			try (Connection connection = getConnection()) {
+				
 				String addEmployeeSQL = "INSERT INTO employee (personID,hourlyRateInPence,hoursPerWeek,startDate,endDate) VALUES (?,?,?,?,?);";
 
 				// try-with-resources Statement
@@ -205,13 +206,14 @@ class DatabaseAccessObject {
 	}
 
 	/**
-	 * Adds a {@code Person} to database in {@code person} table, and return that row's {@code personID} primary key as an int
+	 * Adds a {@code Person} to database in {@code person} table, and return that row's {@code personID} primary key as an int, or -1 in the case of an
+	 * unsuccessful operation.
 	 * 
-	 * @param p a Person object
+	 * @param person a Person object
 	 * @return the new person row's primary key (named personID), or -1 if operation unsuccessful
 	 * @throws SQLException from getConnection() if method fails
 	 */
-	private int addPerson(Person p) {
+	private int addPerson(Person person) {
 
 		int personID;
 		final String ADD_PERSON = "INSERT INTO person (forename,surname,email,phoneNumber) VALUES (?,?,?,?);";
@@ -223,10 +225,10 @@ class DatabaseAccessObject {
 			try (PreparedStatement addPersonStatement = connection.prepareStatement(ADD_PERSON);) {
 
 				// build PreparedStatement
-				addPersonStatement.setString(1, p.getForename());
-				addPersonStatement.setString(2, p.getSurname());
-				addPersonStatement.setString(3, p.getEmail());
-				addPersonStatement.setString(4, p.getPhoneNumber());
+				addPersonStatement.setString(1, person.getForename());
+				addPersonStatement.setString(2, person.getSurname());
+				addPersonStatement.setString(3, person.getEmail());
+				addPersonStatement.setString(4, person.getPhoneNumber());
 
 				// execute PreparedStatement
 				addPersonStatement.executeUpdate();
