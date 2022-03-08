@@ -57,14 +57,13 @@ public class ViewHumanResourcesController {
 		surname.setSortType(SortType.ASCENDING);
 
 		tableEmployee.getSortOrder().setAll(surname);
-		SortedList<Employee> employeesModelSorted = new SortedList<>(FXCollections.observableArrayList(MainController.getDatabase().getEmployees()));
+		SortedList<Employee> employeesModelSorted = new SortedList<>(FXCollections.observableArrayList(MainController.getEmployeesFromDatabase()));
 		employeesModelSorted.comparatorProperty().bind(tableEmployee.comparatorProperty());
 		tableEmployee.setItems(employeesModelSorted);
 	}
 
-	public void addEmployee() throws IOException {
-		//MainController.getView().showHumanResourcesAddEmployee();
-		MainController.getView().getViewHumanResources().getEmployeeDetailAdd().getStage().show();
+	public void addEmployee() {
+		MainController.showEmployeeDetailAdd();
 	}
 
 	public void editEmployee() {

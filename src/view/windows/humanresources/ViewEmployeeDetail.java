@@ -24,5 +24,9 @@ public class ViewEmployeeDetail extends AbstractView {
 
 		controller = super.getLoader().getController();
 	}
+	
+	public ViewEmployeeDetailController getController() {
+		return this.controller;
+	}
 
 }

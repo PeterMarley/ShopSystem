@@ -16,7 +16,7 @@ public class ViewSplashController {
 	private Button buttonPOS;
 
 	public void openHumanResources() {
-		MainController.getView().getViewHumanResources().getStage().show();;
+		MainController.showHumanResources();
 	}
 
 	public void openPointOfSales() {
