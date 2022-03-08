@@ -1,6 +1,8 @@
 package controller;
 
 import view.View;
+import view.windows.humanresources.ViewEmployeeDetailController;
+import view.windows.humanresources.ViewEmployeeDetailControllerEdit;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -43,6 +45,13 @@ public class MainController {
 		view.getViewHumanResources().getEmployeeDetailAdd().getController().clearFields();
 		view.getViewHumanResources().getEmployeeDetailAdd().getStage().close();
 	}
+	
+	public static void editEmployeeInDatabase(Employee originalEmployee, Employee editedEmployee) {
+		dao.editEmployee(originalEmployee, editedEmployee);
+		view.getViewHumanResources().refreshEmployeeTableView();
+		view.getViewHumanResources().getEmployeeDetailEdit().getController().clearFields();
+		view.getViewHumanResources().getEmployeeDetailEdit().getStage().close();
+	}
 
 	//**************************************************************\
 	//																*
@@ -55,6 +64,14 @@ public class MainController {
 	 */
 	public static void showEmployeeDetailAdd() {
 		view.getViewHumanResources().getEmployeeDetailAdd().getStage().show();
+	}
+
+	/**
+	 * Shows the ViewEmployeeDetails window - Edit Employee variant
+	 */
+	public static void showEmployeeDetailEdit(Employee e) {
+		((ViewEmployeeDetailControllerEdit) view.getViewHumanResources().getEmployeeDetailEdit().getController()).setSelectedEmployee(e);
+		view.getViewHumanResources().getEmployeeDetailEdit().getStage().show();
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package view.windows;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -34,10 +36,20 @@ public abstract class AbstractView {
 	 *
 	 */
 	public enum ControllerType {
-		VIEW_SPLASH,
-		VIEW_HUMAN_RESOURCES,
-		VIEW_EMPLOYEE_DETAIL_ADD,
-		VIEW_EMPLOYEE_DETAIL_EDIT;
+		VIEW_SPLASH("view.windows.splash.ViewSplashController"),
+		VIEW_HUMAN_RESOURCES("view.windows.humanresources.ViewHumanResourcesController"),
+		VIEW_EMPLOYEE_DETAIL_ADD("view.windows.humanresources.ViewEmployeeDetailControllerAdd"),
+		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit");
+
+		private String controllerClassName;
+
+		private ControllerType(String controllerClassName) {
+			this.controllerClassName = controllerClassName;
+		}
+
+		public String getControllerName() {
+			return this.controllerClassName;
+		}
 	}
 
 	/**
@@ -64,21 +76,15 @@ public abstract class AbstractView {
 	 * @param type ControllerType - an enum representing possible controllers
 	 */
 	private void setController(ControllerType type) {
-		switch (type) {
-		case VIEW_SPLASH:
-			loader.setController(new ViewSplashController());
-			break;
-		case VIEW_HUMAN_RESOURCES:
-			loader.setController(new ViewHumanResourcesController());
-			break;
-		case VIEW_EMPLOYEE_DETAIL_ADD:
-			loader.setController(new ViewEmployeeDetailControllerAdd());
-			break;
-		case VIEW_EMPLOYEE_DETAIL_EDIT:
-			loader.setController(new ViewEmployeeDetailControllerAdd());
-		//case VIEW_EMPLOYEE_DETAIL_EDIT:
-		//loader.setController(new ViewEmployeeDetailControllerEdit());
-		//break;
+		try {
+			Class<?> controller = Class.forName(type.getControllerName());
+			Constructor<?> controllerConstructor = controller.getConstructor((Class[]) null);
+			loader.setController(controllerConstructor.newInstance((Object[]) null));
+		} catch (InstantiationException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException controllerConstructorEx) {
+			System.out.println("AbstractView.setController(ControllerType) FAILED");
+			System.err.println(controllerConstructorEx.getClass());
+			System.err.println(controllerConstructorEx.getMessage());
 		}
 	}
 
@@ -100,6 +106,10 @@ public abstract class AbstractView {
 		this.loader = new FXMLLoader(getClass().getResource(filepathFXML));
 	}
 
+	public Region getRoot() {
+		return this.root;
+	}
+	
 	/**
 	 * @param root the root to set
 	 * @throws IOException

@@ -21,10 +21,7 @@ public class ViewEmployeeDetailControllerAdd extends ViewEmployeeDetailControlle
 
 	@Override
 	public void employeeToDatabase() {
-
-
-		System.out.println();
-
+		
 		boolean[] validations = super.validateEmployeeDataFromGUI();
 		String errorMsg = super.getAndClearValidationMessage();
 

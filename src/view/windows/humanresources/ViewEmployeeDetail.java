@@ -3,6 +3,8 @@ package view.windows.humanresources;
 import java.io.IOException;
 
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.stage.WindowEvent;
 import view.windows.AbstractView;
 
@@ -38,8 +40,12 @@ public class ViewEmployeeDetail extends AbstractView {
 				"../img/icon_hr.png",
 				(type == AddOrEdit.ADD) ? "Add Employee" : "Edit Employee",
 				(type == AddOrEdit.ADD) ? ControllerType.VIEW_EMPLOYEE_DETAIL_ADD : ControllerType.VIEW_EMPLOYEE_DETAIL_EDIT);
-
 		controller = super.getLoader().getController();
+		((Button) retrieveNodeFromStage(".submitButton")).setText((type == AddOrEdit.ADD) ? "Add Employee" : "Edit Employee");
+	}
+
+	private Node retrieveNodeFromStage(String cssSelector) {
+		return super.getStage().getScene().lookup(cssSelector);
 	}
 
 	/**

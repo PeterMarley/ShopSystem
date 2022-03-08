@@ -4,11 +4,16 @@ import java.io.IOException;
 
 import controller.MainController;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.HumanResourcesModel.Employee;
@@ -35,6 +40,9 @@ public class ViewHumanResourcesController {
 
 	@FXML
 	public void initialize() {
+		TableViewSelectionModel<Employee> s = tableEmployee.getSelectionModel();
+		s.setSelectionMode(SelectionMode.SINGLE);
+		tableEmployee.setSelectionModel(s);
 		fillTableViewEmployees(null);
 	}
 
@@ -62,13 +70,29 @@ public class ViewHumanResourcesController {
 		tableEmployee.setItems(employeesModelSorted);
 	}
 
+	/**
+	 * Open the Add Employee window
+	 */
 	public void addEmployee() {
 		MainController.showEmployeeDetailAdd();
 	}
 
+	/**
+	 * Open the Edit Employee window if an employee has been selected from the {@code tableEmployee}. Otherwise display
+	 * an appropriate alert.
+	 */
 	public void editEmployee() {
-		//Employee e = tableEmployee.getSelectionModel().getSelectedItem();
-		//MainController.getView().showHumanResourcesEditEmployee(e);
+		TableViewSelectionModel<Employee> selection = tableEmployee.getSelectionModel();
+		ObservableList<Employee> selectedEmployee = selection.getSelectedItems();
+		if (selectedEmployee.size() == 1) {
+			Employee e = selectedEmployee.get(0);
+			MainController.showEmployeeDetailEdit(e);
+		} else {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setContentText("You must select an employee!");
+			alert.show();
+		}
+
 		System.out.println("HrController.editEmployee() stub");
 	}
 

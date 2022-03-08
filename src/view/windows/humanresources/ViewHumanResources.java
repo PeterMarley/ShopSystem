@@ -3,6 +3,7 @@ package view.windows.humanresources;
 import java.io.IOException;
 
 import controller.MainController;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import view.windows.AbstractView;
 import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
 /**

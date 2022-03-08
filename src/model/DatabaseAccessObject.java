@@ -145,7 +145,7 @@ public class DatabaseAccessObject {
 									resultSet.getInt("hourlyRateInPence"),
 									resultSet.getDouble("hoursPerWeek"),
 									LocalDate.parse(resultSet.getString("startDate"), FORMAT_OBJECT),
-									( resultSet.getString("endDate") == null || resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
+									(resultSet.getString("endDate") == null || resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
 						} catch (DateTimeException | IllegalArgumentException employeeReadException) {
 							System.err.println("DAO: date convertion exception " + employeeReadException.getClass());
 							System.err.println(employeeReadException.getMessage());
@@ -181,7 +181,7 @@ public class DatabaseAccessObject {
 
 			// try-with-resources Connection
 			try (Connection connection = getConnection()) {
-				
+
 				String addEmployeeSQL = "INSERT INTO employee (personID,hourlyRateInPence,hoursPerWeek,startDate,endDate) VALUES (?,?,?,?,?);";
 
 				// try-with-resources Statement
@@ -242,6 +242,69 @@ public class DatabaseAccessObject {
 			personID = -1;
 		}
 		return personID;
+	}
+
+	public void editEmployee(Employee originalEmployee, Employee editedEmployee) {
+		String getPersonSQL = "SELECT personID FROM person WHERE forename=? AND surname=? AND email=? AND phoneNumber=?;";
+		String getEmployeeSQL = "SELECT * FROM employee INNER JOIN person ON person.personID = employee.personID WHERE employee.personID=?;";
+		String updatePersonSQL = "UPDATE person SET forename=?, surname=?, email=?, phoneNumber=? WHERE personID=?";
+		String updateEmployeeSQL = "UPDATE employee SET hourlyRateInPence=?, hoursPerWeek=?, startDate=?, endDate=? WHERE personID=?";
+
+		// establish connection
+		try (Connection connection = getConnection()) {
+			// create SQL Query to get personID of this person
+			try (PreparedStatement getPersonIDStmt = connection.prepareStatement(getPersonSQL)) {
+				getPersonIDStmt.setString(1, originalEmployee.getForename());
+				getPersonIDStmt.setString(2, originalEmployee.getSurname());
+				getPersonIDStmt.setString(3, originalEmployee.getEmail());
+				getPersonIDStmt.setString(4, originalEmployee.getPhoneNumber());
+				// execute query
+				try (ResultSet getPersonIDResults = getPersonIDStmt.executeQuery()) {
+					// save personID
+					int personID = getPersonIDResults.getInt(1);
+					// construct SQL Query to get this employeeget employee with this personID
+					try (PreparedStatement getEmployeeStmt = connection.prepareStatement(getEmployeeSQL)) {
+						getEmployeeStmt.setInt(1, personID);
+						// execute query
+						try (ResultSet getEmployeeResults = getEmployeeStmt.executeQuery()) {
+							// update person and employee row with the new data
+							try (PreparedStatement updatePersonStmt = connection.prepareStatement(updatePersonSQL);
+									PreparedStatement updateEmployeeStmt = connection.prepareStatement(updateEmployeeSQL);) {
+								updatePersonStmt.setString(1, editedEmployee.getForename());
+								updatePersonStmt.setString(2, editedEmployee.getSurname());
+								updatePersonStmt.setString(3, editedEmployee.getEmail());
+								updatePersonStmt.setString(4, editedEmployee.getPhoneNumber());
+								updatePersonStmt.setInt(5, personID);
+								updatePersonStmt.executeUpdate();
+								updateEmployeeStmt.setInt(1, editedEmployee.getHourlyRate());
+								updateEmployeeStmt.setDouble(2, editedEmployee.getHoursPerWeek());
+								updateEmployeeStmt.setString(3, editedEmployee.getStartDateAsString());
+								updateEmployeeStmt.setString(4, editedEmployee.getEndDateAsString());
+								updateEmployeeStmt.setInt(5, personID);
+								updateEmployeeStmt.executeUpdate();
+							}
+						}
+					}
+				}
+			}
+		} catch (SQLException | IllegalArgumentException editEmployeeEx) {
+			editEmployeeEx.printStackTrace();
+		}
+		System.out.println("DAO editEmployee() stub");
+		System.out.println(originalEmployee);
+		System.out.println(editedEmployee);
+	}
+
+	private Employee buildEmployeeFromResult(ResultSet rs) throws IllegalArgumentException, SQLException {
+		return MODEL.new Employee(
+				rs.getString("forename"),
+				rs.getString("surname"),
+				rs.getString("email"),
+				rs.getString("phoneNumber"),
+				rs.getInt("hourlyRateInPence"),
+				rs.getDouble("hoursPerWeek"),
+				LocalDate.parse(rs.getString("startDate"), FORMAT_OBJECT),
+				LocalDate.parse(rs.getString("endDate"), FORMAT_OBJECT));
 	}
 
 	///////////////////////////////////////

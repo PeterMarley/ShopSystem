@@ -1,3 +1,8 @@
 .requiredField {
 	-fx-text-fill: red;	
 }
+.inputField {
+		-fx-border-color: black;
+		-fx-background-color: white;
+}
+		

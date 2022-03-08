@@ -59,7 +59,7 @@ public abstract class ViewEmployeeDetailController {
 	/**
 	 * A abstract method for pushing a new employee to database, or editing the current one
 	 */
-	protected abstract void employeeToDatabase();
+	public abstract void employeeToDatabase();
 
 	/**
 	 * The number of JavaFX Controls to validate data from
@@ -82,6 +82,10 @@ public abstract class ViewEmployeeDetailController {
 		this.setWeeklyHoursTextField("");
 		this.setStartDateDatePicker(null);
 		this.setEndDateDatePicker(null);
+		colorBordersToDefault();
+	}
+
+	void colorBordersToDefault() {
 		colorBorders(new boolean[] { true, true, true, true, true, true, true, true });
 	}
 

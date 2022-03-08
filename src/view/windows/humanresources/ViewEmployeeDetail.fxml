@@ -20,7 +20,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldForename" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldForename" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -33,7 +33,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldSurname" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldSurname" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -46,7 +46,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldEmail" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldEmail" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -59,7 +59,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldPhoneNumber" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldPhoneNumber" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -72,7 +72,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldHourlyRate" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldHourlyRate" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -85,7 +85,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <TextField fx:id="textFieldWeeklyHours" prefHeight="25.0" prefWidth="209.0" />
+            <TextField fx:id="textFieldWeeklyHours" prefHeight="25.0" styleClass="inputField" prefWidth="209.0" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -98,7 +98,7 @@
                   <Insets right="10.0" />
                </padding>
             </Label>
-            <DatePicker fx:id="datePickerStartDate" />
+            <DatePicker fx:id="datePickerStartDate" styleClass="inputField" />
          </children>
       </HBox>
       <HBox prefHeight="0.0" prefWidth="428.0">
@@ -111,13 +111,13 @@
                   <Insets right="10.0" />
                </padding>
             </Label>   
-            <DatePicker fx:id="datePickerEndDate" />
+            <DatePicker fx:id="datePickerEndDate" styleClass="inputField" />
          </children>
       </HBox>
       <Label prefHeight="17.0" prefWidth="414.0" styleClass="requiredField" text="*Required Fields" />
       <HBox alignment="CENTER" prefHeight="37.0" prefWidth="414.0" spacing="20.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#employeeToDatabase" text="Add Employee" />
+            <Button mnemonicParsing="false" styleClass="submitButton" onAction="#employeeToDatabase" text="Add Employee" />
          </children>
          <VBox.margin>
             <Insets bottom="10.0" />

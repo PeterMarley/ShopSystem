@@ -2,6 +2,8 @@ package model;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -18,6 +20,9 @@ import model.ModelEnums.Messages;
 import model.StockItemModel.AbstractStockItem;
 
 public class HumanResourcesModel {
+	private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+			.appendPattern("yyyy-MM-dd")
+			.toFormatter();
 
 	/**
 	 * The abstract parent class for all personel objects in this program
@@ -209,7 +214,6 @@ public class HumanResourcesModel {
 		private LocalDate startDate;
 		private LocalDate endDate;
 		private Hashtable<LocalDate, Integer> shifts;
-		private LocalDateStringConverter converter;
 
 		//private static final int MINIMUM_WAGE = 800;
 
@@ -232,7 +236,6 @@ public class HumanResourcesModel {
 			this.setHoursPerWeek(weeklyHours);
 			this.setStartDate(start);
 			this.setEndDate(end);
-			this.converter = new LocalDateStringConverter();
 			this.shifts = new Hashtable<LocalDate, Integer>();
 		}
 
@@ -299,7 +302,7 @@ public class HumanResourcesModel {
 		 * @return the startDate as String
 		 */
 		public String getStartDateAsString() {
-			return converter.toString(startDate);
+			return startDate.format(formatter);
 		}
 
 		/**
@@ -321,7 +324,11 @@ public class HumanResourcesModel {
 		 * @return the endDate as String
 		 */
 		public String getEndDateAsString() {
-			return converter.toString(endDate);
+			if (endDate == null) {
+				return "";
+			} else {
+				return endDate.format(formatter);
+			}
 		}
 
 		/**
