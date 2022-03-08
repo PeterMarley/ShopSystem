@@ -35,7 +35,7 @@ public class ViewHumanResourcesController {
 
 	@FXML
 	public void initialize() {
-		fillTableEmployees(null);
+		fillTableViewEmployees(null);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class ViewHumanResourcesController {
 	 * @param e
 	 */
 	@SuppressWarnings("unchecked")
-	public void fillTableEmployees(ActionEvent e) {
+	public void fillTableViewEmployees(ActionEvent e) {
 		forename.setCellValueFactory(new PropertyValueFactory<>("Forename"));
 		surname.setCellValueFactory(new PropertyValueFactory<>("Surname"));
 		email.setCellValueFactory(new PropertyValueFactory<>("Email"));

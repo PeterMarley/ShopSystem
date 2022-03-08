@@ -25,7 +25,7 @@
                         <TableColumn fx:id="endDate" prefWidth="171.0" text="EndDate" />
                     </columns>
                   </TableView>
-                  <Button layoutX="70.0" layoutY="27.0" mnemonicParsing="false" onAction="#fillTableEmployees" text="Refresh" />
+                  <Button layoutX="70.0" layoutY="27.0" mnemonicParsing="false" onAction="#fillTableViewEmployees" text="Refresh" />
                   <Button layoutX="141.0" layoutY="27.0" mnemonicParsing="false" onAction="#addEmployee" text="Add Employee" />
                   <Button layoutX="251.0" layoutY="27.0" mnemonicParsing="false" onAction="#editEmployee" text="Edit Employee" />
                </children></AnchorPane>

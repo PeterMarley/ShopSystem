@@ -36,7 +36,8 @@ public abstract class AbstractView {
 	public enum ControllerType {
 		VIEW_SPLASH,
 		VIEW_HUMAN_RESOURCES,
-		VIEW_EMPLOYEE_DETAIL_ADD;
+		VIEW_EMPLOYEE_DETAIL_ADD,
+		VIEW_EMPLOYEE_DETAIL_EDIT;
 	}
 
 	/**
@@ -73,6 +74,8 @@ public abstract class AbstractView {
 		case VIEW_EMPLOYEE_DETAIL_ADD:
 			loader.setController(new ViewEmployeeDetailControllerAdd());
 			break;
+		case VIEW_EMPLOYEE_DETAIL_EDIT:
+			loader.setController(new ViewEmployeeDetailControllerAdd());
 		//case VIEW_EMPLOYEE_DETAIL_EDIT:
 		//loader.setController(new ViewEmployeeDetailControllerEdit());
 		//break;

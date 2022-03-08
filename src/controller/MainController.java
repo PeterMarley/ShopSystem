@@ -39,7 +39,7 @@ public class MainController {
 	 */
 	public static void addEmployeeToDatabase(Employee employee) {
 		dao.addEmployee(employee);
-		view.getViewHumanResources().refresh();
+		view.getViewHumanResources().refreshEmployeeTableView();
 		view.getViewHumanResources().getEmployeeDetailAdd().getController().clearFields();
 		view.getViewHumanResources().getEmployeeDetailAdd().getStage().close();
 	}
