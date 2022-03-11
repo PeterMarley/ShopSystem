@@ -55,5 +55,4 @@ public class View extends Application {
 		viewHumanResources = new ViewHumanResources();
 	}
 
-
 }

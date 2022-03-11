@@ -291,8 +291,8 @@ public class DatabaseAccessObject {
 			editEmployeeEx.printStackTrace();
 		}
 		System.out.println("DAO editEmployee() stub");
-		System.out.println(originalEmployee);
-		System.out.println(editedEmployee);
+		System.out.println("Employee Pre-Edit" + originalEmployee);
+		System.out.println("Employee Post-Edit " + editedEmployee);
 	}
 
 	private Employee buildEmployeeFromResult(ResultSet rs) throws IllegalArgumentException, SQLException {
