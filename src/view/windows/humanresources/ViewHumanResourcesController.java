@@ -53,6 +53,7 @@ public class ViewHumanResourcesController {
 	 */
 	@SuppressWarnings("unchecked")
 	public void fillTableViewEmployees(ActionEvent e) {
+		System.out.println("doing a refresh");
 		forename.setCellValueFactory(new PropertyValueFactory<>("Forename"));
 		surname.setCellValueFactory(new PropertyValueFactory<>("Surname"));
 		email.setCellValueFactory(new PropertyValueFactory<>("Email"));
@@ -67,7 +68,11 @@ public class ViewHumanResourcesController {
 		tableEmployee.getSortOrder().setAll(surname);
 		SortedList<Employee> employeesModelSorted = new SortedList<>(FXCollections.observableArrayList(MainController.getEmployeesFromDatabase()));
 		employeesModelSorted.comparatorProperty().bind(tableEmployee.comparatorProperty());
+		//		for (Employee em : employeesModelSorted) {
+		//			System.out.println(em.toString());
+		//		}
 		tableEmployee.setItems(employeesModelSorted);
+		tableEmployee.refresh();
 	}
 
 	/**
@@ -86,14 +91,13 @@ public class ViewHumanResourcesController {
 		ObservableList<Employee> selectedEmployee = selection.getSelectedItems();
 		if (selectedEmployee.size() == 1) {
 			Employee e = selectedEmployee.get(0);
+			//this.selectedEmployee = e.clone();
 			MainController.showEmployeeDetailEdit(e);
 		} else {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setContentText("You must select an employee!");
 			alert.show();
 		}
-
-		System.out.println("HrController.editEmployee() stub");
 	}
 
 }

@@ -24,7 +24,7 @@ import view.windows.splash.ViewSplashController;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public abstract class AbstractView {
+public abstract class AbstractWindow {
 
 	private Region root;
 	private Scene scene;
@@ -62,7 +62,7 @@ public abstract class AbstractView {
 	 * @param type         ControllerType enum that represents the different types of controller
 	 * @throws IOException if error occurs during FXML loading in {@code setRoot()}
 	 */
-	public AbstractView(String filepathFXML, String filepathCSS, String filepathIcon, String title, ControllerType type) throws IOException {
+	public AbstractWindow(String filepathFXML, String filepathCSS, String filepathIcon, String title, ControllerType type) throws IOException {
 		this.setLoader(filepathFXML);
 		this.setController(type);
 		this.setRoot();

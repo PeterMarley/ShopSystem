@@ -27,7 +27,7 @@ public class ViewEmployeeDetailControllerEdit extends ViewEmployeeDetailControll
 			}
 		}
 		if (validationsAccepted) {
-			Employee e = model.new Employee(
+			Employee editedEmployee = model.new Employee(
 					super.getForename(),
 					super.getSurname(),
 					super.getEmail(),
@@ -37,7 +37,7 @@ public class ViewEmployeeDetailControllerEdit extends ViewEmployeeDetailControll
 					super.getStartDate(),
 					super.getEndDate());
 			super.colorBordersToDefault();
-			MainController.editEmployeeInDatabase(selectedEmployee, e);
+			MainController.editEmployeeInDatabase(selectedEmployee, editedEmployee);
 		} else {
 			super.colorBorders(validations);
 			Alert alert = new Alert(AlertType.WARNING);

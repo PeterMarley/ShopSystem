@@ -438,6 +438,20 @@ public class HumanResourcesModel {
 			return HumanResourcesModel.this;
 		}
 
+		public Employee clone() {
+			Employee cloned = new Employee(
+					this.getForename(),
+					this.getSurname(),
+					this.getEmail(),
+					this.getPhoneNumber(),
+					this.getHourlyRate(),
+					this.getHoursPerWeek(),
+					this.getStartDateAsLocalDate(),
+					this.getEndDateAsLocalDate());
+			return cloned;
+			
+		}
+
 	}
 
 	/**

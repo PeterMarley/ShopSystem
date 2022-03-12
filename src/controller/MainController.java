@@ -48,9 +48,9 @@ public class MainController {
 	
 	public static void editEmployeeInDatabase(Employee originalEmployee, Employee editedEmployee) {
 		dao.editEmployee(originalEmployee, editedEmployee);
-		view.getViewHumanResources().refreshEmployeeTableView();
 		view.getViewHumanResources().getEmployeeDetailEdit().getController().clearFields();
 		view.getViewHumanResources().getEmployeeDetailEdit().getStage().close();
+		view.getViewHumanResources().refreshEmployeeTableView();
 	}
 
 	//**************************************************************\
@@ -70,7 +70,7 @@ public class MainController {
 	 * Shows the ViewEmployeeDetails window - Edit Employee variant
 	 */
 	public static void showEmployeeDetailEdit(Employee e) {
-		((ViewEmployeeDetailControllerEdit) view.getViewHumanResources().getEmployeeDetailEdit().getController()).setSelectedEmployee(e);
+		((ViewEmployeeDetailControllerEdit) view.getViewHumanResources().getEmployeeDetailEdit().getController()).setSelectedEmployee(e.clone());
 		view.getViewHumanResources().getEmployeeDetailEdit().getStage().show();
 	}
 

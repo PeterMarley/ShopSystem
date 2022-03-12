@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import controller.MainController;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-import view.windows.AbstractView;
+import view.windows.AbstractWindow;
 import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
 /**
  * A JavaFX Window that handles all Human Resources actions of the ShopSystem
@@ -14,7 +14,7 @@ import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public class ViewHumanResources extends AbstractView {
+public class ViewHumanResources extends AbstractWindow {
 
 	private ViewHumanResourcesController hrController;
 	private ViewEmployeeDetail employeeDetailAdd;

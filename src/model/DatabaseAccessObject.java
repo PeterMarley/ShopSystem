@@ -253,35 +253,35 @@ public class DatabaseAccessObject {
 		// establish connection
 		try (Connection connection = getConnection()) {
 			// create SQL Query to get personID of this person
-			try (PreparedStatement getPersonIDStmt = connection.prepareStatement(getPersonSQL)) {
-				getPersonIDStmt.setString(1, originalEmployee.getForename());
-				getPersonIDStmt.setString(2, originalEmployee.getSurname());
-				getPersonIDStmt.setString(3, originalEmployee.getEmail());
-				getPersonIDStmt.setString(4, originalEmployee.getPhoneNumber());
+			try (PreparedStatement stmtGetPersonId = connection.prepareStatement(getPersonSQL)) {
+				stmtGetPersonId.setString(1, originalEmployee.getForename());
+				stmtGetPersonId.setString(2, originalEmployee.getSurname());
+				stmtGetPersonId.setString(3, originalEmployee.getEmail());
+				stmtGetPersonId.setString(4, originalEmployee.getPhoneNumber());
 				// execute query
-				try (ResultSet getPersonIDResults = getPersonIDStmt.executeQuery()) {
+				try (ResultSet rsPersonId = stmtGetPersonId.executeQuery()) {
 					// save personID
-					int personID = getPersonIDResults.getInt(1);
-					// construct SQL Query to get this employeeget employee with this personID
-					try (PreparedStatement getEmployeeStmt = connection.prepareStatement(getEmployeeSQL)) {
-						getEmployeeStmt.setInt(1, personID);
+					int personID = rsPersonId.getInt(1);
+					// construct SQL Query to get this employee with this personID
+					try (PreparedStatement stmtgetEmployee = connection.prepareStatement(getEmployeeSQL)) {
+						stmtgetEmployee.setInt(1, personID);
 						// execute query
-						try (ResultSet getEmployeeResults = getEmployeeStmt.executeQuery()) {
+						try (ResultSet rsGetEmployee = stmtgetEmployee.executeQuery()) {
 							// update person and employee row with the new data
-							try (PreparedStatement updatePersonStmt = connection.prepareStatement(updatePersonSQL);
-									PreparedStatement updateEmployeeStmt = connection.prepareStatement(updateEmployeeSQL);) {
-								updatePersonStmt.setString(1, editedEmployee.getForename());
-								updatePersonStmt.setString(2, editedEmployee.getSurname());
-								updatePersonStmt.setString(3, editedEmployee.getEmail());
-								updatePersonStmt.setString(4, editedEmployee.getPhoneNumber());
-								updatePersonStmt.setInt(5, personID);
-								updatePersonStmt.executeUpdate();
-								updateEmployeeStmt.setInt(1, editedEmployee.getHourlyRate());
-								updateEmployeeStmt.setDouble(2, editedEmployee.getHoursPerWeek());
-								updateEmployeeStmt.setString(3, editedEmployee.getStartDateAsString());
-								updateEmployeeStmt.setString(4, editedEmployee.getEndDateAsString());
-								updateEmployeeStmt.setInt(5, personID);
-								updateEmployeeStmt.executeUpdate();
+							try (PreparedStatement stmtUpdatePerson = connection.prepareStatement(updatePersonSQL);
+									PreparedStatement stmtUpdateEmployee = connection.prepareStatement(updateEmployeeSQL);) {
+								stmtUpdatePerson.setString(1, editedEmployee.getForename());
+								stmtUpdatePerson.setString(2, editedEmployee.getSurname());
+								stmtUpdatePerson.setString(3, editedEmployee.getEmail());
+								stmtUpdatePerson.setString(4, editedEmployee.getPhoneNumber());
+								stmtUpdatePerson.setInt(5, personID);
+								stmtUpdatePerson.executeUpdate();
+								stmtUpdateEmployee.setInt(1, editedEmployee.getHourlyRate());
+								stmtUpdateEmployee.setDouble(2, editedEmployee.getHoursPerWeek());
+								stmtUpdateEmployee.setString(3, editedEmployee.getStartDateAsString());
+								stmtUpdateEmployee.setString(4, editedEmployee.getEndDateAsString());
+								stmtUpdateEmployee.setInt(5, personID);
+								stmtUpdateEmployee.executeUpdate();
 							}
 						}
 					}
