@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import view.windows.AbstractWindow;
+import view.windows.Window;
 import view.windows.humanresources.ViewEmployeeDetail;
 import view.windows.humanresources.ViewHumanResources;
 import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;

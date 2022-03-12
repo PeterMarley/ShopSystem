@@ -7,14 +7,12 @@ import model.ModelEnums.CategoryFloorItem;
 import model.ModelEnums.CategoryLiquidFuel;
 import model.ModelEnums.CategorySolidFuel;
 import model.ModelEnums.Messages;
-import model.ModelEnums.Messages;
 import model.ModelEnums.StorageTemp;
 
 public class StockItemModel {
 
 	private static int uniqueIDSeed = 0;
 
-	
 	/**
 	 * The abstract superclass for all Stock objects
 	 * 

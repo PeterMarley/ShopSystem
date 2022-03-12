@@ -244,6 +244,12 @@ public class DatabaseAccessObject {
 		return personID;
 	}
 
+	/**
+	 * Queries database for person with
+	 * 
+	 * @param originalEmployee
+	 * @param editedEmployee
+	 */
 	public void editEmployee(Employee originalEmployee, Employee editedEmployee) {
 		String getPersonSQL = "SELECT personID FROM person WHERE forename=? AND surname=? AND email=? AND phoneNumber=?;";
 		String getEmployeeSQL = "SELECT * FROM employee INNER JOIN person ON person.personID = employee.personID WHERE employee.personID=?;";
@@ -295,17 +301,68 @@ public class DatabaseAccessObject {
 		System.out.println("Employee Post-Edit " + editedEmployee);
 	}
 
-	private Employee buildEmployeeFromResult(ResultSet rs) throws IllegalArgumentException, SQLException {
-		return MODEL.new Employee(
-				rs.getString("forename"),
-				rs.getString("surname"),
-				rs.getString("email"),
-				rs.getString("phoneNumber"),
-				rs.getInt("hourlyRateInPence"),
-				rs.getDouble("hoursPerWeek"),
-				LocalDate.parse(rs.getString("startDate"), FORMAT_OBJECT),
-				LocalDate.parse(rs.getString("endDate"), FORMAT_OBJECT));
+	/**
+	 * Deletes an Employee from employee table (and it's corresponding Person in person table)
+	 * 
+	 * @param employeeToDelete
+	 */
+	public void deleteEmployee(Employee employeeToDelete) {
+		String getPersonSQL = "SELECT personID FROM person WHERE forename=? AND surname=? AND email=? AND phoneNumber=?;";
+		String getPersonSQLConfirmResultNumber = "SELECT COUNT(*) FROM person WHERE forename=? AND surname=? AND email=? AND phoneNumber=?;";
+		String deletePersonSQL = "DELETE FROM person WHERE personID=?;";
+		String deleteEmployeeSQL = "DELETE FROM employee WHERE personID=?;";
+		// try with resources get connection
+		try (Connection connection = getConnection()) {
+			// try with resources - a statement to get the total number of results returned by the query
+			try (PreparedStatement stmtGetPersonIDConfirmResultNumber = connection.prepareStatement(getPersonSQLConfirmResultNumber)) {
+				stmtGetPersonIDConfirmResultNumber.setString(1, employeeToDelete.getForename());
+				stmtGetPersonIDConfirmResultNumber.setString(2, employeeToDelete.getSurname());
+				stmtGetPersonIDConfirmResultNumber.setString(3, employeeToDelete.getEmail());
+				stmtGetPersonIDConfirmResultNumber.setString(4, employeeToDelete.getPhoneNumber());
+				try (ResultSet rsGetPersonIDConfirmResultNumber = stmtGetPersonIDConfirmResultNumber.executeQuery()) {
+					int rowCount = 0;
+					while (rsGetPersonIDConfirmResultNumber.next()) {
+						rowCount++;
+					}
+					if (rowCount == 1) {
+						try (PreparedStatement stmtGetPersonID = connection.prepareStatement(getPersonSQL)) {
+							stmtGetPersonID.setString(1, employeeToDelete.getForename());
+							stmtGetPersonID.setString(2, employeeToDelete.getSurname());
+							stmtGetPersonID.setString(3, employeeToDelete.getEmail());
+							stmtGetPersonID.setString(4, employeeToDelete.getPhoneNumber());
+							try (ResultSet rsGetPersonID = stmtGetPersonID.executeQuery()) {
+								int personID;
+								rsGetPersonID.next();
+								personID = rsGetPersonID.getInt(1);
+								System.out.println(personID);
+								try (PreparedStatement stmtDeletePerson = connection.prepareStatement(deletePersonSQL);
+										PreparedStatement stmtDeleteEmployee = connection.prepareStatement(deleteEmployeeSQL)) {
+									stmtDeletePerson.setInt(1, personID);
+									stmtDeleteEmployee.setInt(1, personID);
+									stmtDeletePerson.executeUpdate();
+									stmtDeleteEmployee.executeUpdate();
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (SQLException deleteEmployeeEx) {
+			deleteEmployeeEx.printStackTrace();
+		}
 	}
+
+	//	private Employee buildEmployeeFromResult(ResultSet rs) throws IllegalArgumentException, SQLException {
+	//		return MODEL.new Employee(
+	//				rs.getString("forename"),
+	//				rs.getString("surname"),
+	//				rs.getString("email"),
+	//				rs.getString("phoneNumber"),
+	//				rs.getInt("hourlyRateInPence"),
+	//				rs.getDouble("hoursPerWeek"),
+	//				LocalDate.parse(rs.getString("startDate"), FORMAT_OBJECT),
+	//				LocalDate.parse(rs.getString("endDate"), FORMAT_OBJECT));
+	//	}
 
 	///////////////////////////////////////
 	// Quiet Close overloaded methods	//

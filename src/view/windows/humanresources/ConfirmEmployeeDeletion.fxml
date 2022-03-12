@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="366.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="600.0">
+         <children>
+            <Label text="Confirm Employee Deletion" />
+         </children>
+      </HBox>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Label layoutX="110.0" layoutY="60.0" text="EmployeeDetailsHere" />
+         </children>
+      </AnchorPane>
+      <Pane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Button layoutX="300.0" layoutY="55.0" mnemonicParsing="false" text="Delete Employee" fx:id="buttonConfirmDelete" onAction="#confirmDelete" />
+            <HBox layoutX="31.0" layoutY="36.0" prefHeight="63.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <CheckBox mnemonicParsing="false" fx:id="checkboxConfirmDelete" />
+                  <Label prefHeight="34.0" prefWidth="184.0" text="I confirm that I wish to delete this employee" wrapText="true" />
+               </children>
+            </HBox>
+         </children>
+      </Pane>
+   </children>
+</VBox>

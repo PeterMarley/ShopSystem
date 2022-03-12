@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import controller.MainController;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-import view.windows.AbstractWindow;
+import model.HumanResourcesModel.Employee;
+import view.windows.Window;
 import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
 /**
  * A JavaFX Window that handles all Human Resources actions of the ShopSystem
@@ -14,11 +15,12 @@ import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public class ViewHumanResources extends AbstractWindow {
+public class ViewHumanResources extends Window {
 
 	private ViewHumanResourcesController hrController;
 	private ViewEmployeeDetail employeeDetailAdd;
 	private ViewEmployeeDetail employeeDetailEdit;
+	private ConfirmEmployeeDeletion employeeDeleteConfirm;
 
 	/**
 	 * Constructor for ViewHumanResources
@@ -30,6 +32,7 @@ public class ViewHumanResources extends AbstractWindow {
 		hrController = super.getLoader().getController();
 		this.setEmployeeDetailAdd();
 		this.setEmployeeDetailEdit();
+		this.setEmployeeDeleteConfirm();
 	}
 
 	/**
@@ -71,6 +74,23 @@ public class ViewHumanResources extends AbstractWindow {
 	private void setEmployeeDetailEdit() throws IOException {
 		this.employeeDetailEdit = new ViewEmployeeDetail(AddOrEdit.EDIT);
 
+	}
+
+	public ConfirmEmployeeDeletion getEmployeeDeleteConfirm() {
+		return employeeDeleteConfirm;
+	}
+
+	/**
+	 * Instantiate the ConfirmEmployeeDeletion to handle confirmation that a user wishes to truly delete an employee
+	 * @throws IOException
+	 */
+	public void setEmployeeDeleteConfirm() throws IOException {
+		this.employeeDeleteConfirm = new ConfirmEmployeeDeletion();
+	}
+	
+	public Employee getSelectedEmployee() {
+		
+		return hrController.getSelectedEmployeeAsEmployee();
 	}
 
 }

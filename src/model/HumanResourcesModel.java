@@ -14,12 +14,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.converter.LocalDateStringConverter;
 import model.ModelEnums.Categories;
+import model.ModelEnums.Messages;
 import model.ModelEnums.Numbers;
-import model.ModelEnums.Messages;
-import model.ModelEnums.Messages;
 import model.StockItemModel.AbstractStockItem;
 
 public class HumanResourcesModel {
+
 	private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 			.appendPattern("yyyy-MM-dd")
 			.toFormatter();
@@ -449,21 +449,21 @@ public class HumanResourcesModel {
 					this.getStartDateAsLocalDate(),
 					this.getEndDateAsLocalDate());
 			return cloned;
-			
+
 		}
 
 	}
 
-	/**
-	 * Represents a company supplier, and specifically is meant for interaction with this programs JavaFX GUI
-	 * 
-	 * @author Peter Marley
-	 * @StudentNumber 13404067
-	 * @Email pmarley03@qub.ac.uk
-	 * @GitHub https://github.com/PeterMarley
-	 *
-	 */
 	public class Supplier extends Person {
+		/**
+		 * Represents a company supplier, and specifically is meant for interaction with this programs JavaFX GUI
+		 * 
+		 * @author Peter Marley
+		 * @StudentNumber 13404067
+		 * @Email pmarley03@qub.ac.uk
+		 * @GitHub https://github.com/PeterMarley
+		 *
+		 */
 
 		private ArrayList<Categories> categories;
 		private ArrayList<AbstractStockItem> stockItems;
@@ -809,5 +809,4 @@ public class HumanResourcesModel {
 
 		}
 	}
-
 }

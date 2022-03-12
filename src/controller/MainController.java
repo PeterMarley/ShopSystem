@@ -35,6 +35,15 @@ public class MainController {
 	//**************************************************************/
 
 	/**
+	 * Queries the database for all employees and return it in the form of an {@code ArrayList<Employee>}
+	 * 
+	 * @return an {@code ArrayList<Employee>} containing all employees from database
+	 */
+	public static ArrayList<Employee> getEmployeesFromDatabase() {
+		return dao.getEmployees();
+	}
+
+	/**
 	 * Adds an employee to the database
 	 * 
 	 * @param employee
@@ -45,12 +54,30 @@ public class MainController {
 		view.getViewHumanResources().getEmployeeDetailAdd().getController().clearFields();
 		view.getViewHumanResources().getEmployeeDetailAdd().getStage().close();
 	}
-	
+
+	/**
+	 * Queries a database an originalEmployee, then updates that with the the editedEmployees data
+	 * 
+	 * @param originalEmployee
+	 * @param editedEmployee
+	 */
 	public static void editEmployeeInDatabase(Employee originalEmployee, Employee editedEmployee) {
 		dao.editEmployee(originalEmployee, editedEmployee);
 		view.getViewHumanResources().getEmployeeDetailEdit().getController().clearFields();
 		view.getViewHumanResources().getEmployeeDetailEdit().getStage().close();
 		view.getViewHumanResources().refreshEmployeeTableView();
+	}
+
+	/**
+	 * Searches the database for an employeeToDelete, and removes that entry
+	 * 
+	 * @param employeeToDelete
+	 */
+	public static void deleteEmployeeInDatabase() {
+		dao.deleteEmployee(getSelectedEmployee());
+		view.getViewHumanResources().getEmployeeDeleteConfirm().getStage().close();
+		view.getViewHumanResources().refreshEmployeeTableView();
+		System.out.println("MainController.deleteEmployeeInDatabase() stub");
 	}
 
 	//**************************************************************\
@@ -81,13 +108,14 @@ public class MainController {
 		view.getViewHumanResources().getStage().show();
 	}
 
-	/**
-	 * Queries the database for all employees and return it in the form of an {@code ArrayList<Employee>}
-	 * 
-	 * @return an {@code ArrayList<Employee>} containing all employees from database
-	 */
-	public static ArrayList<Employee> getEmployeesFromDatabase() {
-		return dao.getEmployees();
+	public static void showEmployeeConfirmDeletion(Employee employeeToDelete) {
+		view.getViewHumanResources().getEmployeeDeleteConfirm().getStage().show();
+		System.out.println("MainController.showEmployeeConfirmDeletion() stub");
+
+	}
+	
+	public static Employee getSelectedEmployee() {
+		return view.getViewHumanResources().getSelectedEmployee();
 	}
 
 }

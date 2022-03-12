@@ -6,7 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.stage.WindowEvent;
-import view.windows.AbstractWindow;
+import view.windows.Window;
 
 /**
  * A JavaFX Window that can handle adding adding new employee to database, or editing an existing employee in database.
@@ -17,7 +17,7 @@ import view.windows.AbstractWindow;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public class ViewEmployeeDetail extends AbstractWindow {
+public class ViewEmployeeDetail extends Window {
 	/**
 	 * Enumerated type for the kind of ViewEmployeeDetail that can be created
 	 */

@@ -87,17 +87,46 @@ public class ViewHumanResourcesController {
 	 * an appropriate alert.
 	 */
 	public void editEmployee() {
-		TableViewSelectionModel<Employee> selection = tableEmployee.getSelectionModel();
-		ObservableList<Employee> selectedEmployee = selection.getSelectedItems();
+		ObservableList<Employee> selectedEmployee = getSelectedEmployeeAsObservableList();
 		if (selectedEmployee.size() == 1) {
 			Employee e = selectedEmployee.get(0);
 			//this.selectedEmployee = e.clone();
 			MainController.showEmployeeDetailEdit(e);
 		} else {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setContentText("You must select an employee!");
-			alert.show();
+			alertNoEmployeeSelected("You must select an employee!");
 		}
+	}
+
+	/**
+	 * 
+	 */
+	public void deleteEmployee() {
+		ObservableList<Employee> selectedEmployee = getSelectedEmployeeAsObservableList();
+		if (selectedEmployee.size() == 1) {
+			Employee e = selectedEmployee.get(0);
+			MainController.showEmployeeConfirmDeletion(e);
+		} else {
+			alertNoEmployeeSelected("You must select an employee!");
+		}
+		System.out.println("ViewHumanResourcesController.deleteEmployee() stub");
+	}
+
+	ObservableList<Employee> getSelectedEmployeeAsObservableList() {
+		TableViewSelectionModel<Employee> selection = tableEmployee.getSelectionModel();
+		ObservableList<Employee> selectedEmployee = selection.getSelectedItems();
+		return selectedEmployee;
+	}
+	
+	Employee getSelectedEmployeeAsEmployee() {
+		TableViewSelectionModel<Employee> selection = tableEmployee.getSelectionModel();
+		ObservableList<Employee> selectedEmployee = selection.getSelectedItems();
+		return selectedEmployee.get(0);
+	}
+
+	private void alertNoEmployeeSelected(String alertText) {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setContentText(alertText);
+		alert.show();
 	}
 
 }

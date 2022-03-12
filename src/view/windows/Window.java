@@ -24,7 +24,7 @@ import view.windows.splash.ViewSplashController;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public abstract class AbstractWindow {
+public abstract class Window {
 
 	private Region root;
 	private Scene scene;
@@ -32,14 +32,15 @@ public abstract class AbstractWindow {
 	private FXMLLoader loader;
 
 	/**
-	 * Represents the different kind of controllers required in an AbstractView
+	 * Represents the different kind of controllers required in an Window
 	 *
 	 */
 	public enum ControllerType {
 		VIEW_SPLASH("view.windows.splash.ViewSplashController"),
 		VIEW_HUMAN_RESOURCES("view.windows.humanresources.ViewHumanResourcesController"),
 		VIEW_EMPLOYEE_DETAIL_ADD("view.windows.humanresources.ViewEmployeeDetailControllerAdd"),
-		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit");
+		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit"),
+		CONFIRM_EMPLOYEE_DELETION("view.windows.humanresources.ConfirmEmployeeDeletionController");
 
 		private String controllerClassName;
 
@@ -53,7 +54,7 @@ public abstract class AbstractWindow {
 	}
 
 	/**
-	 * Parameterised constructor for an AbstractView subclass
+	 * Parameterised constructor for an Window subclass
 	 * 
 	 * @param filepathFXML the name of the FXML file containing this SceneGraphs mark-down
 	 * @param filepathCSS  the name of the CSS file containing this SceneGraphs style sheets
@@ -62,7 +63,7 @@ public abstract class AbstractWindow {
 	 * @param type         ControllerType enum that represents the different types of controller
 	 * @throws IOException if error occurs during FXML loading in {@code setRoot()}
 	 */
-	public AbstractWindow(String filepathFXML, String filepathCSS, String filepathIcon, String title, ControllerType type) throws IOException {
+	public Window(String filepathFXML, String filepathCSS, String filepathIcon, String title, ControllerType type) throws IOException {
 		this.setLoader(filepathFXML);
 		this.setController(type);
 		this.setRoot();
@@ -82,7 +83,7 @@ public abstract class AbstractWindow {
 			loader.setController(controllerConstructor.newInstance((Object[]) null));
 		} catch (InstantiationException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException controllerConstructorEx) {
-			System.out.println("AbstractView.setController(ControllerType) FAILED");
+			System.out.println("Window.setController(ControllerType) FAILED");
 			System.err.println(controllerConstructorEx.getClass());
 			System.err.println(controllerConstructorEx.getMessage());
 		}
@@ -109,7 +110,7 @@ public abstract class AbstractWindow {
 	public Region getRoot() {
 		return this.root;
 	}
-	
+
 	/**
 	 * @param root the root to set
 	 * @throws IOException
@@ -126,13 +127,15 @@ public abstract class AbstractWindow {
 	private void setScene(String filepathCSS) {
 		this.scene = new Scene(root);
 		this.scene.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
-		this.scene.getStylesheets().add(getClass().getResource(filepathCSS).toExternalForm());
+		if (filepathCSS != null) {
+			this.scene.getStylesheets().add(getClass().getResource(filepathCSS).toExternalForm());
+		}
 	}
 
 	/**
 	 * Get the Stage
 	 * 
-	 * @return the Stage of this AbstractView
+	 * @return the Stage of this Window
 	 */
 	public Stage getStage() {
 		return this.stage;

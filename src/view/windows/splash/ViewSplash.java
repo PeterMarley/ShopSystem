@@ -10,9 +10,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import view.windows.AbstractWindow;
+import view.windows.Window;
 
-public class ViewSplash extends AbstractWindow {
+public class ViewSplash extends Window {
 
 	public ViewSplash() throws IOException {
 		super("ViewSplash.fxml","ViewSplash.css","../img/icon_splash.png", "SASpm", ControllerType.VIEW_SPLASH);

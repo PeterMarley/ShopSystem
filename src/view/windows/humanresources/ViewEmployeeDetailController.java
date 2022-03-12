@@ -52,7 +52,7 @@ public abstract class ViewEmployeeDetailController {
 
 	//**************************************************************\
 	//																*
-	//		JavaFX Control manipulation methods										*
+	//		JavaFX Control manipulation methods						*
 	//																*
 	//**************************************************************/
 
@@ -60,15 +60,6 @@ public abstract class ViewEmployeeDetailController {
 	 * A abstract method for pushing a new employee to database, or editing the current one
 	 */
 	public abstract void employeeToDatabase();
-
-	/**
-	 * The number of JavaFX Controls to validate data from
-	 * 
-	 * @return
-	 */
-	protected int getNumberOfFieldsToValidate() {
-		return FIELDS_TO_VALIDATE;
-	}
 
 	/**
 	 * Set all JavaFX controls to empty, and set borders and fills to default (black 1px border white fill)
@@ -85,6 +76,9 @@ public abstract class ViewEmployeeDetailController {
 		colorBordersToDefault();
 	}
 
+	/**
+	 * Colour all JavaFX control borders to black
+	 */
 	void colorBordersToDefault() {
 		colorBorders(new boolean[] { true, true, true, true, true, true, true, true });
 	}
@@ -95,14 +89,15 @@ public abstract class ViewEmployeeDetailController {
 	 * If false at that position, colour borders red and fill with lighter red. If true at that position colour borders black and fill with white.<br>
 	 * 
 	 * @param validations a boolean[] containing the validation status of the following JavaFX controls:<br>
-	 *                    0 - (TextField) textFieldForename<br>
-	 *                    1 - (TextField) textFieldSurname<br>
-	 *                    2 - (TextField) textFieldEmail<br>
-	 *                    3 - (TextField) textFieldPhoneNumber<br>
-	 *                    4 - (TextField) textFieldHourlyRate<br>
-	 *                    5 - (TextField) textFieldWeeklyHours<br>
-	 *                    6 - (DatePicker) datePickerStartDate<br>
-	 *                    7 - (DatePicker) datePickerEndDate<br>
+	 *                    index 0 - (TextField) textFieldForename<br>
+	 *                    index 1 - (TextField) textFieldSurname<br>
+	 *                    index 2 - (TextField) textFieldEmail<br>
+	 *                    index 3 - (TextField) textFieldPhoneNumber<br>
+	 *                    index 4 - (TextField) textFieldHourlyRate<br>
+	 *                    index 5 - (TextField) textFieldWeeklyHours<br>
+	 *                    index 6 - (DatePicker) datePickerStartDate<br>
+	 *                    index 7 - (DatePicker) datePickerEndDate<br>
+	 * @throws IllegalArgumentException if validations is null or length is not equal to {@value #FIELDS_TO_VALIDATE}
 	 */
 	void colorBorders(boolean[] validations) {
 		// default colours
@@ -113,7 +108,7 @@ public abstract class ViewEmployeeDetailController {
 		String borderRed = "-fx-border-color: red;";
 		String fillRed = "-fx-background-color: #ffc2ca;";
 
-		if (validations != null && validations.length == getNumberOfFieldsToValidate()) {
+		if (validations != null && validations.length == FIELDS_TO_VALIDATE) {
 			if (!validations[0]) {
 				this.getForenameTextField().setStyle(borderRed + fillRed);
 			} else {
@@ -155,9 +150,9 @@ public abstract class ViewEmployeeDetailController {
 				this.getEndDateDatePicker().setStyle(borderBlack + fillWhite);
 			}
 		} else if (validations == null) {
-			System.err.println("ViewEmployeeDetailController.colorBorders(boolean[]) - parameter array was null");
+			throw new IllegalArgumentException("ViewEmployeeDetailController.colorBorders(boolean[]) - parameter array was null");
 		} else {
-			System.err.println("ViewEmployeeDetailController.colorBorders(boolean[]) - parameter array was incorrect length. Was " + validations.length + " but should be " + FIELDS_TO_VALIDATE);
+			throw new IllegalArgumentException("ViewEmployeeDetailController.colorBorders(boolean[]) - parameter array was incorrect length. Was " + validations.length + " but should be " + FIELDS_TO_VALIDATE);
 		}
 	}
 
@@ -175,7 +170,7 @@ public abstract class ViewEmployeeDetailController {
 	 *         7 - (DatePicker) datePickerEndDate<br>
 	 */
 	protected boolean[] validateEmployeeDataFromGUI() {
-		boolean[] validations = new boolean[getNumberOfFieldsToValidate()];
+		boolean[] validations = new boolean[FIELDS_TO_VALIDATE];
 		// validate data inputed on AddEmployee.fxml was of acceptable format
 
 		// validate forename
@@ -251,7 +246,7 @@ public abstract class ViewEmployeeDetailController {
 
 	//**************************************************************\
 	//																*
-	//		Getters and Setters										*
+	//		JavaFX Control Getters and Setters						*
 	//																*
 	//**************************************************************/
 
