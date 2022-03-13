@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import view.windows.Window.ControllerType;
 import view.windows.humanresources.ConfirmEmployeeDeletionController;
 import view.windows.humanresources.ViewEmployeeDetailControllerAdd;
 import view.windows.humanresources.ViewEmployeeDetailControllerEdit;
@@ -38,22 +39,20 @@ public abstract class Window {
 	 *
 	 */
 	public enum ControllerType {
-		VIEW_SPLASH("view.windows.splash.ViewSplashController",ViewSplashController.class),
-		VIEW_HUMAN_RESOURCES("view.windows.humanresources.ViewHumanResourcesController",ViewHumanResourcesController.class),
-		VIEW_EMPLOYEE_DETAIL_ADD("view.windows.humanresources.ViewEmployeeDetailControllerAdd",ViewEmployeeDetailControllerAdd.class),
-		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit",ViewEmployeeDetailControllerEdit.class),
-		CONFIRM_EMPLOYEE_DELETION("view.windows.humanresources.ConfirmEmployeeDeletionController",ConfirmEmployeeDeletionController.class);
+		VIEW_SPLASH(ViewSplashController.class),
+		VIEW_HUMAN_RESOURCES(ViewHumanResourcesController.class),
+		VIEW_EMPLOYEE_DETAIL_ADD(ViewEmployeeDetailControllerAdd.class),
+		VIEW_EMPLOYEE_DETAIL_EDIT(ViewEmployeeDetailControllerEdit.class),
+		CONFIRM_EMPLOYEE_DELETION(ConfirmEmployeeDeletionController.class);
 
-		private String controllerClassName;
-		private Class controllerClass;
+		private Class<?> controllerClass;
 
-		private ControllerType(String controllerClassName, Class controllerClass) {
-			this.controllerClassName = controllerClassName;
+		private ControllerType(Class<?> controllerClass) {
 			this.controllerClass = controllerClass;
 		}
 
-		public String getControllerName() {
-			return this.controllerClassName;
+		public Class<?> getControllerClass() {
+			return this.controllerClass;
 		}
 	}
 
@@ -69,7 +68,7 @@ public abstract class Window {
 	 */
 	public Window(String filepathFXML, String filepathCSS, String filepathIcon, String title, ControllerType type) throws IOException {
 		this.setLoader(filepathFXML);
-		this.setController(type);
+		this.setController(type.getControllerClass());
 		this.setRoot();
 		this.setScene(filepathCSS);
 		this.setStage(filepathIcon, title);
@@ -78,14 +77,13 @@ public abstract class Window {
 	/**
 	 * Set the of the FXMLLoader prior to Stage.setScene
 	 * 
-	 * @param type ControllerType - an enum representing possible controllers
+	 * @param type Controller - the class that is this JavaFX windows controller
 	 */
-	private void setController(ControllerType type) {
+	private void setController(Class<?> controller) {
 		try {
-			Class<?> controller = Class.forName(type.getControllerName());
 			Constructor<?> controllerConstructor = controller.getConstructor((Class[]) null);
 			loader.setController(controllerConstructor.newInstance((Object[]) null));
-		} catch (InstantiationException | ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+		} catch (InstantiationException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException controllerConstructorEx) {
 			System.out.println("Window.setController(ControllerType) FAILED");
 			System.err.println(controllerConstructorEx.getClass());

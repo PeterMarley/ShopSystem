@@ -6,9 +6,14 @@ import view.windows.humanresources.ViewEmployeeDetailControllerEdit;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import log.Log;
 import model.DatabaseAccessObject;
 import model.HumanResourcesModel.Employee;
 
@@ -41,15 +46,27 @@ public class MainController {
 	 * All access to JavaFX GUI through this object
 	 */
 	private static View view;
+	/**
+	 * Logging system object
+	 */
+	private static Log log;
 
 	public static void main(String[] args) {
 		try {
+			log = new Log("./src/log/logs/ShopSystem");
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
+			log.log(new String[] { "String passed in", "a second string" });
+			log.log("single string");
+			log.log(new String[] { "String passed in", "a second string" });
+
+
+			Application.launch(View.class);
 		} catch (SQLException controllerInitException) {
 			System.err.println(controllerInitException.getMessage());
+		} finally {
+			log.close();
 		}
-		Application.launch(View.class);
 
 	}
 
@@ -144,7 +161,9 @@ public class MainController {
 	}
 
 	/**
-	 * Returns the employee currently selection in the Employees tab of the {@link view.windows.humanresources.ViewHumanResources} TableView JavaFX control
+	 * Returns the employee currently selection in the Employees tab of the {@link view.windows.humanresources.ViewHumanResources} TableView JavaFX
+	 * control
+	 * 
 	 * @return the currently selected {@code Employee} from the employees {@code TableView} in {@link view.windows.humanresources.ViewHumanResources}
 	 */
 	public static Employee getSelectedEmployee() {
