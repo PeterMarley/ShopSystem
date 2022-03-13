@@ -2,6 +2,7 @@ package view;
 
 import java.io.IOException;
 
+import controller.MainController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.windows.Window;
@@ -34,7 +35,7 @@ public class View extends Application {
 
 	/**
 	 * @param create the ViewSplash
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void setViewSplash() throws IOException {
 		viewSplash = new ViewSplash();
@@ -49,7 +50,7 @@ public class View extends Application {
 
 	/**
 	 * @param create the ViewHumanResources
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void setViewHumanResources() throws IOException {
 		viewHumanResources = new ViewHumanResources();

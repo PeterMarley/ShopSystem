@@ -21,16 +21,32 @@ import java.time.format.DateTimeFormatterBuilder;
  */
 public class Log implements AutoCloseable {
 
+	private enum LogMessageType {
+		ACTION("Action"),
+		EXCEPTION("Exception");
+
+		private String logType;
+
+		private LogMessageType(String logType) {
+			this.logType = logType;
+		}
+
+		public String toString() {
+			return this.logType;
+		}
+	}
+
 	// file writing objects
 	private File logfile;
 	private FileWriter fileWriter;
 	private BufferedWriter bufferedWriter;
+	private LocalDateTime stamp;
 
 	// configurations
 	private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 			.appendPattern("yyyy-MM-dd-'['HH'h'.mm'm'.ss's'.SSSS'ms]'")
 			.toFormatter();
-	private static final String logHeaders = "Called From,DateStamp,Messages";
+	private static final String logHeaders = "LoggedFrom,DateTimeStamp,LogType,Messages";
 
 	private static boolean logConfigured = false;
 
@@ -101,7 +117,8 @@ public class Log implements AutoCloseable {
 		if (logfilepath == null || logfilepath.isBlank()) {
 			throw new IllegalArgumentException("logfilepath cannot be null or blank");
 		}
-		logfile = new File(logfilepath + "-" + LocalDateTime.now().format(formatter) + ".csv");
+		stamp = LocalDateTime.now();
+		logfile = new File(logfilepath + "-" + stamp.format(formatter) + ".csv");
 		System.out.println(logfile);
 	}
 
@@ -124,12 +141,15 @@ public class Log implements AutoCloseable {
 	//																*
 	//**************************************************************/
 
-	private String[] constructLogMessage(String[] messages) {
-		String[] logMessage = new String[2 + messages.length];
+	private String[] constructLogMessage(String[] messages, LogMessageType type) {
+
+		//"LoggedFrom,DateTimeStamp,LogType,Messages";
+		String[] logMessage = new String[logHeaders.split(",").length + messages.length - 1];
 		logMessage[0] = getCallingClass();
 		logMessage[1] = LocalDateTime.now().format(formatter);
+		logMessage[2] = type.toString();
 		for (int i = 0; i < messages.length; i++) {
-			logMessage[i + 2] = messages[i];
+			logMessage[i + 3] = messages[i];
 		}
 		return logMessage;
 	}
@@ -139,8 +159,8 @@ public class Log implements AutoCloseable {
 	 * 
 	 * @param message
 	 */
-	public void log(String[] message) {
-		String[] logMessage = constructLogMessage(message);
+	public void log(String[] message, LogMessageType type) {
+		String[] logMessage = constructLogMessage(message, type);
 		if (logConfigured) {
 			try (BufferedWriter bw = getBufferedWriter()) {
 				for (int i = 0; i < logMessage.length; i++) {
@@ -149,13 +169,6 @@ public class Log implements AutoCloseable {
 						bw.write(",");
 					}
 				}
-				//				bw.write(getCallingClass() + "," + LocalDateTime.now().format(formatter) + ",");
-				//				for (int i = 0; i < message.length; i++) {
-				//					bw.write(message[i]);
-				//					if (i != message.length - 1) {
-				//						bw.write(",");
-				//					}
-				//				}
 				bw.newLine();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -171,12 +184,28 @@ public class Log implements AutoCloseable {
 		}
 	}
 
+	public void log(String[] message) {
+		log(message, LogMessageType.ACTION);
+	}
+
 	/**
 	 * Logs a message of a single string
 	 *
 	 * @param message
 	 */
 	public void log(String message) {
-		log(new String[] { message });
+		log(new String[] { message }, LogMessageType.ACTION);
+	}
+
+	public void log(Exception exception) {
+		String[] messages = new String[exception.getStackTrace().length + 2];
+		messages[0] = (exception.getMessage() != null) ? exception.getMessage() : "No Message";
+		messages[1] = (exception.getCause() != null) ? exception.getCause().toString() : "No Cause";
+		int index = 2;
+		for (StackTraceElement s : exception.getStackTrace()) {
+			messages[index] = s.toString();
+			index++;
+		}
+		log(messages, LogMessageType.EXCEPTION);
 	}
 }

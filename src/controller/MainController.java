@@ -56,14 +56,15 @@ public class MainController {
 			log = new Log("./src/log/logs/ShopSystem");
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
-			log.log(new String[] { "String passed in", "a second string" });
-			log.log("single string");
-			log.log(new String[] { "String passed in", "a second string" });
-
+			//log.log(new String[] { "String passed in", "a second string" });
+			//log.log("single string");
+			//log.log(new String[] { "String passed in", "a second string" });
+			//log.log(new IllegalArgumentException("Test Exception"));
 
 			Application.launch(View.class);
-		} catch (SQLException controllerInitException) {
+		} catch (Exception controllerInitException) {
 			System.err.println(controllerInitException.getMessage());
+			log.log(controllerInitException);
 		} finally {
 			log.close();
 		}
@@ -168,6 +169,10 @@ public class MainController {
 	 */
 	public static Employee getSelectedEmployee() {
 		return view.getViewHumanResources().getSelectedEmployee();
+	}
+	
+	public static void log(Exception e) {
+		log.log(e);
 	}
 
 }
