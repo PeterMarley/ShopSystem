@@ -12,9 +12,34 @@ import javafx.application.Application;
 import model.DatabaseAccessObject;
 import model.HumanResourcesModel.Employee;
 
+/**
+ * This class facilitates interaction between the GUI and data models. It contains the programs {@code main()} method.
+ * <hr>
+ * <b><i>Components</i></b><br>
+ * <br>
+ * 
+ * <b>View</b><br>
+ * A JavaFX GUI containing many subcomponents.<br>
+ * - {@link view.View} A container for all the subcomponents of the GUI<br>
+ * <br>
+ * <b>Model</b> Contains several components: <br>
+ * - {@link model.DatabaseAccessObject} allows interaction with an sqlite3 database<br>
+ * - {@link model.HumanResourcesModel} contains all person/ human resources based objects<br>
+ * - {@link model.StockItemModel} contains all stock (shelf/ floor items, solid fuels, liquid fuels<br>
+ * - {@link model.ModelEnums} enumerated types use by model classes<br>
+ * - {@link model.shop.db} the actual sqlite3 database
+ * 
+ * @param args
+ */
 public class MainController {
 
+	/**
+	 * All access to database through this object
+	 */
 	private static DatabaseAccessObject dao;
+	/**
+	 * All access to JavaFX GUI through this object
+	 */
 	private static View view;
 
 	public static void main(String[] args) {
@@ -69,7 +94,7 @@ public class MainController {
 	}
 
 	/**
-	 * Searches the database for an employeeToDelete, and removes that entry
+	 * Searches the database for an employeeToDelete, and removes that entry (from both person and employee tables)
 	 * 
 	 * @param employeeToDelete
 	 */
@@ -108,12 +133,20 @@ public class MainController {
 		view.getViewHumanResources().getStage().show();
 	}
 
+	/**
+	 * Shows the user a window that requires them to check a CheckBox and confirm the imminent deletion of this employee from the database (both person
+	 * and employee tables)
+	 * 
+	 * @param employeeToDelete
+	 */
 	public static void showEmployeeConfirmDeletion(Employee employeeToDelete) {
 		view.getViewHumanResources().getEmployeeDeleteConfirm().getStage().show();
-		System.out.println("MainController.showEmployeeConfirmDeletion() stub");
-
 	}
-	
+
+	/**
+	 * Returns the employee currently selection in the Employees tab of the {@link view.windows.humanresources.ViewHumanResources} TableView JavaFX control
+	 * @return the currently selected {@code Employee} from the employees {@code TableView} in {@link view.windows.humanresources.ViewHumanResources}
+	 */
 	public static Employee getSelectedEmployee() {
 		return view.getViewHumanResources().getSelectedEmployee();
 	}

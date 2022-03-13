@@ -18,6 +18,16 @@ import model.ModelEnums.Messages;
 import model.ModelEnums.Numbers;
 import model.StockItemModel.AbstractStockItem;
 
+/**
+ * This class contains all the human resources (relating to people) objects, and a static class containing all static methods containing all
+ * validation business rules, that are accessible from elsewhere in the program
+ * 
+ * @author Peter Marley
+ * @StudentNumber 13404067
+ * @Email pmarley03@qub.ac.uk
+ * @GitHub https://github.com/PeterMarley
+ *
+ */
 public class HumanResourcesModel {
 
 	private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()

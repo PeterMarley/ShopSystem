@@ -7,8 +7,10 @@ import javafx.scene.control.TableView.TableViewSelectionModel;
 import model.HumanResourcesModel.Employee;
 import view.windows.Window;
 import view.windows.humanresources.ViewEmployeeDetail.AddOrEdit;
+
 /**
  * A JavaFX Window that handles all Human Resources actions of the ShopSystem
+ * 
  * @author Peter Marley
  * @StudentNumber 13404067
  * @Email pmarley03@qub.ac.uk
@@ -82,14 +84,18 @@ public class ViewHumanResources extends Window {
 
 	/**
 	 * Instantiate the ConfirmEmployeeDeletion to handle confirmation that a user wishes to truly delete an employee
+	 * 
 	 * @throws IOException
 	 */
 	public void setEmployeeDeleteConfirm() throws IOException {
 		this.employeeDeleteConfirm = new ConfirmEmployeeDeletion();
 	}
-	
+
+	/**
+	 * Returns the employee currently selection in the Employees tab of the {@link view.windows.humanresources.ViewHumanResources} TableView JavaFX control
+	 * @return the currently selected {@code Employee} from the employees {@code TableView} in {@link view.windows.humanresources.ViewHumanResources}
+	 */
 	public Employee getSelectedEmployee() {
-		
 		return hrController.getSelectedEmployeeAsEmployee();
 	}
 

@@ -11,12 +11,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import view.windows.humanresources.ConfirmEmployeeDeletionController;
 import view.windows.humanresources.ViewEmployeeDetailControllerAdd;
+import view.windows.humanresources.ViewEmployeeDetailControllerEdit;
 import view.windows.humanresources.ViewHumanResourcesController;
 import view.windows.splash.ViewSplashController;
 
 /**
- * An abstract superclass for all View Windows of the Shop Administration System
+ * An abstract superclass for all View Windows of the Shop System.
  * 
  * @author Peter Marley
  * @StudentNumber 13404067
@@ -36,16 +38,18 @@ public abstract class Window {
 	 *
 	 */
 	public enum ControllerType {
-		VIEW_SPLASH("view.windows.splash.ViewSplashController"),
-		VIEW_HUMAN_RESOURCES("view.windows.humanresources.ViewHumanResourcesController"),
-		VIEW_EMPLOYEE_DETAIL_ADD("view.windows.humanresources.ViewEmployeeDetailControllerAdd"),
-		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit"),
-		CONFIRM_EMPLOYEE_DELETION("view.windows.humanresources.ConfirmEmployeeDeletionController");
+		VIEW_SPLASH("view.windows.splash.ViewSplashController",ViewSplashController.class),
+		VIEW_HUMAN_RESOURCES("view.windows.humanresources.ViewHumanResourcesController",ViewHumanResourcesController.class),
+		VIEW_EMPLOYEE_DETAIL_ADD("view.windows.humanresources.ViewEmployeeDetailControllerAdd",ViewEmployeeDetailControllerAdd.class),
+		VIEW_EMPLOYEE_DETAIL_EDIT("view.windows.humanresources.ViewEmployeeDetailControllerEdit",ViewEmployeeDetailControllerEdit.class),
+		CONFIRM_EMPLOYEE_DELETION("view.windows.humanresources.ConfirmEmployeeDeletionController",ConfirmEmployeeDeletionController.class);
 
 		private String controllerClassName;
+		private Class controllerClass;
 
-		private ControllerType(String controllerClassName) {
+		private ControllerType(String controllerClassName, Class controllerClass) {
 			this.controllerClassName = controllerClassName;
+			this.controllerClass = controllerClass;
 		}
 
 		public String getControllerName() {

@@ -116,7 +116,8 @@ public class DatabaseAccessObject {
 	/////////////////////////////////////
 
 	/**
-	 * Queries the sqlite3 database for all employee data and constructs an {@code ArrayList<Employee>} with all employees
+	 * Queries the sqlite3 database for all employee data and constructs an {@code ArrayList<Employee>} with all employees. If the database operation
+	 * fails an empty {@code ArrayList<Employee>} is returned
 	 * 
 	 * @return an {@code ArrayList<Employee>}
 	 */
@@ -167,7 +168,7 @@ public class DatabaseAccessObject {
 
 	/**
 	 * Adds an {@code Employee} to database in tables {@code person} and {@code employee}, linking the employee to the person via the
-	 * {@code person.personID}
+	 * {@code person.personID} value
 	 * primary key
 	 * 
 	 * @param e a Employee
@@ -245,7 +246,7 @@ public class DatabaseAccessObject {
 	}
 
 	/**
-	 * Queries database for person with
+	 * Queries database for person/employee {@code originalEmployee}, and edits it to reflect the {@code editiedEmployee}
 	 * 
 	 * @param originalEmployee
 	 * @param editedEmployee
@@ -363,22 +364,4 @@ public class DatabaseAccessObject {
 	//				LocalDate.parse(rs.getString("startDate"), FORMAT_OBJECT),
 	//				LocalDate.parse(rs.getString("endDate"), FORMAT_OBJECT));
 	//	}
-
-	///////////////////////////////////////
-	// Quiet Close overloaded methods	//
-	/////////////////////////////////////
-
-	/**
-	 * Try to close an SQL object, if it is not null.
-	 * 
-	 * @param SQLObject
-	 */
-	private void closeQuietly(AutoCloseable SQLObject) {
-		if (SQLObject != null) {
-			try {
-				SQLObject.close();
-			} catch (Exception e) {
-			}
-		}
-	}
 }
