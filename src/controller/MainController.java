@@ -170,9 +170,32 @@ public class MainController {
 	public static Employee getSelectedEmployee() {
 		return view.getViewHumanResources().getSelectedEmployee();
 	}
-	
-	public static void log(Exception e) {
-		log.log(e);
+
+	/**
+	 * Logs the contents of an Exception
+	 * 
+	 * @param exceptionToLog
+	 */
+	public static void log(Exception exceptionToLog) {
+		log.log(exceptionToLog);
+	}
+
+	/**
+	 * Logs the contents of a String array
+	 * 
+	 * @param messagesToLog
+	 */
+	public static void log(String[] messagesToLog) {
+		log.log(messagesToLog);
+	}
+
+	/**
+	 * Logs a String
+	 * 
+	 * @param messageToLog
+	 */
+	public static void log(String messageToLog) {
+		log.log(messageToLog);
 	}
 
 }

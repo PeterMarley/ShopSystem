@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A simple logging system. Preferred usage is to
@@ -22,7 +24,7 @@ import java.time.format.DateTimeFormatterBuilder;
 public class Log implements AutoCloseable {
 
 	private enum LogMessageType {
-		ACTION("Action"),
+		GENERAL("General"),
 		EXCEPTION("Exception");
 
 		private String logType;
@@ -158,13 +160,16 @@ public class Log implements AutoCloseable {
 	 * Log a message made of several strings
 	 * 
 	 * @param message
+	 * @param LogMessageType
 	 */
-	public void log(String[] message, LogMessageType type) {
+	private void log(String[] message, LogMessageType type) {
+
 		String[] logMessage = constructLogMessage(message, type);
-		if (logConfigured) {
+
+		if (logConfigured && logMessage != null) {
 			try (BufferedWriter bw = getBufferedWriter()) {
 				for (int i = 0; i < logMessage.length; i++) {
-					bw.write(logMessage[i]);
+					bw.write((logMessage[i] != null) ? logMessage[i] : "null");
 					if (i != logMessage.length - 1) {
 						bw.write(",");
 					}
@@ -184,19 +189,42 @@ public class Log implements AutoCloseable {
 		}
 	}
 
+	/**
+	 * Logs a series of messages in a String array
+	 * 
+	 * @param message
+	 */
 	public void log(String[] message) {
-		log(message, LogMessageType.ACTION);
+		log(message, LogMessageType.GENERAL);
 	}
 
 	/**
-	 * Logs a message of a single string
+	 * Logs a single message in a String
 	 *
 	 * @param message
 	 */
 	public void log(String message) {
-		log(new String[] { message }, LogMessageType.ACTION);
+		log(new String[] { message }, LogMessageType.GENERAL);
 	}
 
+	/**
+	 * Logs a series of messages in an {@code ArrayList<String>}
+	 * 
+	 * @param messages
+	 */
+	public void log(ArrayList<String> messages) {
+		String[] messageStr = new String[messages.size()];
+		for (int i = 0; i < messages.size(); i++) {
+			messageStr[i] = messages.get(i);
+		}
+		log(messageStr, LogMessageType.GENERAL);
+	}
+
+	/**
+	 * Logs a series of messages from an Exception's details
+	 * 
+	 * @param exception
+	 */
 	public void log(Exception exception) {
 		String[] messages = new String[exception.getStackTrace().length + 2];
 		messages[0] = (exception.getMessage() != null) ? exception.getMessage() : "No Message";
