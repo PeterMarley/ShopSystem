@@ -56,15 +56,11 @@ public class MainController {
 			log = new Log("./src/log/logs/ShopSystem");
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
-			//log.log(new String[] { "String passed in", "a second string" });
-			//log.log("single string");
-			//log.log(new String[] { "String passed in", "a second string" });
-			//log.log(new IllegalArgumentException("Test Exception"));
-
+			log("MainController initialised - starting View");
 			Application.launch(View.class);
 		} catch (Exception controllerInitException) {
 			System.err.println(controllerInitException.getMessage());
-			log.log(controllerInitException);
+			log(controllerInitException);
 		} finally {
 			log.close();
 		}
@@ -83,6 +79,7 @@ public class MainController {
 	 * @return an {@code ArrayList<Employee>} containing all employees from database
 	 */
 	public static ArrayList<Employee> getEmployeesFromDatabase() {
+		log("Employees retrieved from database");
 		return dao.getEmployees();
 	}
 
@@ -120,7 +117,6 @@ public class MainController {
 		dao.deleteEmployee(getSelectedEmployee());
 		view.getViewHumanResources().getEmployeeDeleteConfirm().getStage().close();
 		view.getViewHumanResources().refreshEmployeeTableView();
-		System.out.println("MainController.deleteEmployeeInDatabase() stub");
 	}
 
 	//**************************************************************\

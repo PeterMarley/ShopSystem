@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import controller.MainController;
 import model.HumanResourcesModel.Employee;
 import model.HumanResourcesModel.Person;
 
@@ -95,9 +96,12 @@ public class DatabaseAccessObject {
 	 */
 	private void testConnection(String dbFilepath) throws SQLException {
 		try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);) {
-			System.out.println("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
-					"to pool! @ " + LocalDateTime.now().format(FORMAT_LOG) + " (DB: " + dbFilepath + ")");
 			this.dbFilepath = dbFilepath;
+			MainController.log("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
+					"to pool! @ " + LocalDateTime.now().format(FORMAT_LOG) + " (DB: " + dbFilepath + ")");
+		} catch (SQLException testConnectionEx) {
+			MainController.log(testConnectionEx);
+			throw testConnectionEx;
 		}
 	}
 
@@ -108,7 +112,14 @@ public class DatabaseAccessObject {
 	 * @throws SQLException if database access error occurs
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
+		Connection connection = null;
+		try {
+			connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
+		} catch (SQLException getConnectionEx) {
+			MainController.log(getConnectionEx);
+			throw getConnectionEx;
+		}
+		return connection;
 	}
 
 	///////////////////////////////////////
@@ -152,12 +163,14 @@ public class DatabaseAccessObject {
 							System.err.println(employeeReadException.getMessage());
 						}
 					}
+					MainController.log(employees.size() + " Employees retrieved from database");
 				}
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException getEmployeesEx) {
 			System.err.println("DAO: getEmployees() failed");
-			System.err.println(e.getMessage());
+			System.err.println(getEmployeesEx.getMessage());
+			MainController.log(getEmployeesEx);
 		}
 		return employees;
 	}
@@ -197,11 +210,13 @@ public class DatabaseAccessObject {
 
 					// add employee to database
 					addEmployeeStatement.executeUpdate();
+					MainController.log(new String[] { "Employee pushed to database: " + e.toString(), "personID: " + foreignKey });
 				}
 
 			} catch (SQLException addEmployeeException) {
 				System.err.println("DAO: addEmployee() failed");
 				System.err.println(addEmployeeException.getMessage());
+				MainController.log(addEmployeeException);
 			}
 		}
 	}
@@ -238,9 +253,11 @@ public class DatabaseAccessObject {
 				try (ResultSet rs = addPersonStatement.getGeneratedKeys();) {
 					personID = rs.getInt(1);
 				}
+				MainController.log(new String[] { "Person pushed to database: " + person.toString(), "personID: " + personID });
 			}
-		} catch (SQLException e) {
+		} catch (SQLException addPersonEx) {
 			personID = -1;
+			MainController.log(addPersonEx);
 		}
 		return personID;
 	}
@@ -289,6 +306,11 @@ public class DatabaseAccessObject {
 								stmtUpdateEmployee.setString(4, editedEmployee.getEndDateAsString());
 								stmtUpdateEmployee.setInt(5, personID);
 								stmtUpdateEmployee.executeUpdate();
+								MainController.log(new String[] {
+										"Employee updated in database",
+										"Original Employee: " + originalEmployee.toString(),
+										"Edited Employee: " + editedEmployee.toString()
+								});
 							}
 						}
 					}
@@ -296,6 +318,7 @@ public class DatabaseAccessObject {
 			}
 		} catch (SQLException | IllegalArgumentException editEmployeeEx) {
 			editEmployeeEx.printStackTrace();
+			MainController.log(editEmployeeEx);
 		}
 		System.out.println("DAO editEmployee() stub");
 		System.out.println("Employee Pre-Edit" + originalEmployee);
@@ -342,6 +365,10 @@ public class DatabaseAccessObject {
 									stmtDeleteEmployee.setInt(1, personID);
 									stmtDeletePerson.executeUpdate();
 									stmtDeleteEmployee.executeUpdate();
+									MainController.log(new String[] {
+											"Employee deleted from database",
+											"Employee: " + employeeToDelete.toString()
+									});
 								}
 							}
 						}
@@ -350,6 +377,7 @@ public class DatabaseAccessObject {
 			}
 		} catch (SQLException deleteEmployeeEx) {
 			deleteEmployeeEx.printStackTrace();
+			MainController.log(deleteEmployeeEx);
 		}
 	}
 

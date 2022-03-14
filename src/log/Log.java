@@ -93,7 +93,8 @@ public class Log implements AutoCloseable {
 	 */
 	private String getCallingClass() {
 		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-		return stack[stack.length - 1].toString();
+		//TODO figure out what part of stack trace to return thats actually useful
+		return (stack.length >= 3) ? stack[0].toString() + " - " + stack[1].toString() + " - " + stack[2].toString() : stack[0].toString();
 	}
 
 	/**
