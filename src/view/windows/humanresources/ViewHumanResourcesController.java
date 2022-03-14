@@ -17,26 +17,48 @@ import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.HumanResourcesModel.Employee;
+import model.HumanResourcesModel.Person;
 
 public class ViewHumanResourcesController {
+	// Employee Table
 	@FXML
 	private TableView<Employee> tableEmployee;
 	@FXML
-	private TableColumn<Employee, String> forename;
+	private TableColumn<Employee, String> employeeForename;
 	@FXML
-	private TableColumn<Employee, String> surname;
+	private TableColumn<Employee, String> employeeSurname;
 	@FXML
-	private TableColumn<Employee, String> email;
+	private TableColumn<Employee, String> employeeEmail;
 	@FXML
-	private TableColumn<Employee, String> phoneNumber;
+	private TableColumn<Employee, String> employeePhoneNumber;
 	@FXML
-	private TableColumn<Employee, Integer> hourlyRate;
+	private TableColumn<Employee, Integer> employeeHourlyRate;
 	@FXML
-	private TableColumn<Employee, Double> weeklyHours;
+	private TableColumn<Employee, Double> employeeWeeklyHours;
 	@FXML
-	private TableColumn<Employee, String> startDate;
+	private TableColumn<Employee, String> employeeStartDate;
 	@FXML
-	private TableColumn<Employee, String> endDate;
+	private TableColumn<Employee, String> employeeEndDate;
+	
+	// Person Table
+	@FXML
+	private TableView<Person> tablePerson;
+	@FXML
+	private TableColumn<Person, String> personForename;
+	@FXML
+	private TableColumn<Person, String> personSurname;
+	@FXML
+	private TableColumn<Person, String> personEmail;
+	@FXML
+	private TableColumn<Person, String> personPhoneNumber;
+	@FXML
+	private TableColumn<Person, Integer> personHourlyRate;
+	@FXML
+	private TableColumn<Person, Double> personWeeklyHours;
+	@FXML
+	private TableColumn<Person, String> personStartDate;
+	@FXML
+	private TableColumn<Person, String> personEndDate;
 
 	@FXML
 	public void initialize() {
@@ -46,6 +68,12 @@ public class ViewHumanResourcesController {
 		fillTableViewEmployees(null);
 	}
 
+	//**************************************************************\
+	//																*
+	//		Employee Tab Operations									*
+	//																*
+	//**************************************************************/
+	
 	/**
 	 * Draw employee data from database and display in TableView
 	 * 
@@ -54,18 +82,18 @@ public class ViewHumanResourcesController {
 	@SuppressWarnings("unchecked")
 	public void fillTableViewEmployees(ActionEvent e) {
 		System.out.println("doing a refresh");
-		forename.setCellValueFactory(new PropertyValueFactory<>("Forename"));
-		surname.setCellValueFactory(new PropertyValueFactory<>("Surname"));
-		email.setCellValueFactory(new PropertyValueFactory<>("Email"));
-		phoneNumber.setCellValueFactory(new PropertyValueFactory<>("PhoneNumber"));
-		hourlyRate.setCellValueFactory(new PropertyValueFactory<>("HourlyRateAsCurrency"));
-		weeklyHours.setCellValueFactory(new PropertyValueFactory<>("HoursPerWeek"));
-		startDate.setCellValueFactory(new PropertyValueFactory<>("StartDateAsString"));
-		endDate.setCellValueFactory(new PropertyValueFactory<>("EndDateAsString"));
+		employeeForename.setCellValueFactory(new PropertyValueFactory<>("Forename"));
+		employeeSurname.setCellValueFactory(new PropertyValueFactory<>("Surname"));
+		employeeEmail.setCellValueFactory(new PropertyValueFactory<>("Email"));
+		employeePhoneNumber.setCellValueFactory(new PropertyValueFactory<>("PhoneNumber"));
+		employeeHourlyRate.setCellValueFactory(new PropertyValueFactory<>("HourlyRateAsCurrency"));
+		employeeWeeklyHours.setCellValueFactory(new PropertyValueFactory<>("HoursPerWeek"));
+		employeeStartDate.setCellValueFactory(new PropertyValueFactory<>("StartDateAsString"));
+		employeeEndDate.setCellValueFactory(new PropertyValueFactory<>("EndDateAsString"));
 
-		surname.setSortType(SortType.ASCENDING);
+		employeeSurname.setSortType(SortType.ASCENDING);
 
-		tableEmployee.getSortOrder().setAll(surname);
+		tableEmployee.getSortOrder().setAll(employeeSurname);
 		SortedList<Employee> employeesModelSorted = new SortedList<>(FXCollections.observableArrayList(MainController.getEmployeesFromDatabase()));
 		employeesModelSorted.comparatorProperty().bind(tableEmployee.comparatorProperty());
 		//		for (Employee em : employeesModelSorted) {
@@ -128,5 +156,28 @@ public class ViewHumanResourcesController {
 		alert.setContentText(alertText);
 		alert.show();
 	}
+	
+	//**************************************************************\
+	//																*
+	//		Person Tab Operations									*
+	//																*
+	//**************************************************************/
+
+	public void fillTableViewPeople(ActionEvent e) {
+		
+	}
+	
+	public void addPerson() {
+		
+	}
+	
+	public void editPerson() {
+		
+	}
+	
+	public void deletePerson() {
+		
+	}
+	
 
 }

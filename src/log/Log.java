@@ -91,10 +91,18 @@ public class Log implements AutoCloseable {
 	 * 
 	 * @return
 	 */
-	private String getCallingClass() {
-		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+	private String getRelevantStackInfo() {
+		ArrayList<StackTraceElement> stack = new ArrayList<StackTraceElement>();
 		//TODO figure out what part of stack trace to return thats actually useful
-		return (stack.length >= 3) ? stack[0].toString() + " - " + stack[1].toString() + " - " + stack[2].toString() : stack[0].toString();
+		System.out.println("=======================================================");
+		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+			if (!e.toString().startsWith("java") && !e.toString().startsWith("log") && !e.toString().startsWith("Log")) {
+				stack.add(e);
+			}
+		}
+		//return Thread.currentThread().get
+		return stack.toString().replace(',', '-');
+		//return (stack.length >= 3) ? stack[0].toString() + " - " + stack[1].toString() + " - " + stack[2].toString() : stack[0].toString();
 	}
 
 	/**
@@ -148,7 +156,7 @@ public class Log implements AutoCloseable {
 
 		//"LoggedFrom,DateTimeStamp,LogType,Messages";
 		String[] logMessage = new String[logHeaders.split(",").length + messages.length - 1];
-		logMessage[0] = getCallingClass();
+		logMessage[0] = getRelevantStackInfo();
 		logMessage[1] = LocalDateTime.now().format(formatter);
 		logMessage[2] = type.toString();
 		for (int i = 0; i < messages.length; i++) {

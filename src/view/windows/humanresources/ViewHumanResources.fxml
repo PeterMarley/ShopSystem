@@ -12,18 +12,18 @@
    <tabs>
       <Tab text="Employees">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <AnchorPane fx:id="tabEmployees" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <TableView fx:id="tableEmployee" layoutX="70.0" layoutY="69.0" prefHeight="669.0" prefWidth="1005.0">
                      <columns>
-                        <TableColumn fx:id="forename" prefWidth="75.0" text="Forename" />
-                        <TableColumn fx:id="surname" prefWidth="75.0" text="Surname" />
-                        <TableColumn fx:id="email" prefWidth="178.0" text="Email" />
-                        <TableColumn fx:id="phoneNumber" prefWidth="139.0" text="PhoneNumber" />
-                        <TableColumn fx:id="hourlyRate" prefWidth="85.0" text="Rate" />
-                        <TableColumn fx:id="weeklyHours" prefWidth="88.0" text="Hours" />
-                        <TableColumn fx:id="startDate" prefWidth="176.0" text="StartDate" />
-                        <TableColumn fx:id="endDate" prefWidth="171.0" text="EndDate" />
+                        <TableColumn fx:id="employeeForename" prefWidth="75.0" text="Forename" />
+                        <TableColumn fx:id="employeeSurname" prefWidth="75.0" text="Surname" />
+                        <TableColumn fx:id="employeeEmail" prefWidth="178.0" text="Email" />
+                        <TableColumn fx:id="employeePhoneNumber" prefWidth="139.0" text="PhoneNumber" />
+                        <TableColumn fx:id="employeeHourlyRate" prefWidth="85.0" text="Rate" />
+                        <TableColumn fx:id="employeeWeeklyHours" prefWidth="88.0" text="Hours" />
+                        <TableColumn fx:id="employeeStartDate" prefWidth="176.0" text="StartDate" />
+                        <TableColumn fx:id="employeeEndDate" prefWidth="171.0" text="EndDate" />
                      </columns>
                   </TableView>
                   <HBox layoutX="70.0" layoutY="14.0" prefHeight="41.0" prefWidth="578.0" spacing="10.0">
@@ -45,7 +45,26 @@
       </Tab>
       <Tab text="All People">
          <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            <AnchorPane fx:id="tabPeople" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tablePeople" layoutX="70.0" layoutY="69.0" prefHeight="669.0" prefWidth="1005.0">
+                     <columns>
+                        <TableColumn fx:id="forename1" prefWidth="75.0" text="Forename" />
+                        <TableColumn fx:id="surname1" prefWidth="75.0" text="Surname" />
+                        <TableColumn fx:id="email1" prefWidth="178.0" text="Email" />
+                        <TableColumn fx:id="phoneNumber1" prefWidth="139.0" text="PhoneNumber" />
+                     </columns>
+                  </TableView>
+                  <HBox layoutX="70.0" layoutY="14.0" prefHeight="41.0" prefWidth="578.0" spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#fillTableViewPeople" prefWidth="150.0" text="Refresh" />
+                        <Button mnemonicParsing="false" onAction="#addPerson" prefWidth="150.0" text="Add Person" />
+                        <Button mnemonicParsing="false" onAction="#editPerson" prefWidth="150.0" text="Edit Person" />
+                        <Button mnemonicParsing="false" onAction="#deletePerson" prefHeight="25.0" prefWidth="150.0" text="Delete Person" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
          </content>
       </Tab>
    </tabs>
