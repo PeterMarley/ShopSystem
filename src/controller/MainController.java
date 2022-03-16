@@ -59,7 +59,6 @@ public class MainController {
 			log("MainController initialised - starting View");
 			Application.launch(View.class);
 		} catch (Exception controllerInitException) {
-			System.err.println(controllerInitException.getMessage());
 			log(controllerInitException);
 		} finally {
 			log.close();
@@ -166,6 +165,12 @@ public class MainController {
 	public static Employee getSelectedEmployee() {
 		return view.getViewHumanResources().getSelectedEmployee();
 	}
+
+	//**************************************************************\
+	//																*
+	//		Public Logging methods									*
+	//																*
+	//**************************************************************/
 
 	/**
 	 * Logs the contents of an Exception

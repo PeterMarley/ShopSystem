@@ -63,7 +63,7 @@ class UnitTestDatabaseAccessObject {
 		try {
 			dropTables();
 		} catch (SQLException e) {
-			System.out.println("@BeforeEach happy with database state prior to testing");
+			System.out.println("@BeforeAll happy with database state prior to testing");
 		}
 	}
 
@@ -111,9 +111,9 @@ class UnitTestDatabaseAccessObject {
 		System.out.println("@AfterEach beginning");
 		try {
 			dropTables();
-			System.out.println("@AfterAll complete!");
+			System.out.println("@AfterEach complete!");
 		} catch (SQLException e) {
-			System.err.println("@AfterAll failed!");
+			System.err.println("@AfterEach failed!");
 			System.err.println(e.getMessage());
 		}
 	}

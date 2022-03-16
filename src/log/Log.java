@@ -94,7 +94,6 @@ public class Log implements AutoCloseable {
 	private String getRelevantStackInfo() {
 		ArrayList<StackTraceElement> stack = new ArrayList<StackTraceElement>();
 		//TODO figure out what part of stack trace to return thats actually useful
-		System.out.println("=======================================================");
 		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
 			if (!e.toString().startsWith("java") && !e.toString().startsWith("log") && !e.toString().startsWith("Log")) {
 				stack.add(e);
