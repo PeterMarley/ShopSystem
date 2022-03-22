@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import log.Logger;
 import model.HumanResourcesModel.Employee;
 
 /**
@@ -41,19 +42,26 @@ class UnitTestDatabaseAccessObject {
 	private static DatabaseAccessObject dao;
 	private static final String TEST_DB = "test.db";
 	private static final String TEST_DB_REL_JUNIT = "jdbc:sqlite:./junitTests/model/";
-	private static final String TEST_DB_REL_SRC = "jdbc:sqlite:../../junitTests/model/";
+	private static final String TEST_DB_REL_SRC = "./junitTests/model/";
 	private static final int TEST_ROWS = 5;
 	private static HumanResourcesModel model = new HumanResourcesModel();
 	private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 			.appendPattern("yyyy-MM-dd")
 			.toFormatter();
 
-	private static Employee employee1, employee2, employee3, employee4, employee5NoEndDate, employee6, employee7, employee8;
+	private static Employee employee1,
+			employee2,
+			employee3,
+			employee4,
+			employee5NoEndDate,
+			employee6,
+			employee7,
+			employee8;
 
 	///////////////////////
 	// JUNIT setup		//
 	/////////////////////
-	
+
 	/**
 	 * Ensures database has no person or employee tables
 	 */
@@ -62,8 +70,9 @@ class UnitTestDatabaseAccessObject {
 		// clear all tables
 		try {
 			dropTables();
+			System.out.println("@BeforeAll had to drop tables.");
 		} catch (SQLException e) {
-			System.out.println("@BeforeEach happy with database state prior to testing");
+			System.out.println("@BeforeAll happy with database state prior to testing.");
 		}
 	}
 
@@ -94,6 +103,8 @@ class UnitTestDatabaseAccessObject {
 			createTestTables();
 			createTestRows(employees);
 			checkTestSetup(employees.length);
+			//Log log = new Log("./testLog");
+			dao = new DatabaseAccessObject(TEST_DB_REL_SRC + TEST_DB);
 			System.out.println("@BeforeEach complete");
 		} catch (SQLException e) {
 			System.err.println("@BeforeEach failed! Exiting unit tests");
@@ -101,8 +112,6 @@ class UnitTestDatabaseAccessObject {
 			afterEach();
 			System.exit(1);
 		}
-
-		dao = new DatabaseAccessObject(TEST_DB_REL_SRC + TEST_DB);
 
 	}
 
@@ -121,7 +130,7 @@ class UnitTestDatabaseAccessObject {
 	///////////////////////
 	// Unit Tests		//
 	/////////////////////
-	
+
 	/**
 	 * Test {@code DatabaseAccessObject}s {@code getEmployees()} method
 	 */
@@ -143,12 +152,12 @@ class UnitTestDatabaseAccessObject {
 	 */
 	@Test
 	void test_addEmployee() {
-		
+
 		ArrayList<Employee> employees = dao.getEmployees();
 		assertEquals(employees.size(), TEST_ROWS);
 
 		int totalRows = TEST_ROWS;
-		
+
 		// add employee & check database state
 		dao.addEmployee(employee6);
 		employees = dao.getEmployees();
@@ -178,7 +187,7 @@ class UnitTestDatabaseAccessObject {
 	///////////////////////
 	// Test Harness		//
 	/////////////////////
-	
+
 	/**
 	 * Create employee and person tables in an empty database
 	 */

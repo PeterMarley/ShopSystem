@@ -13,7 +13,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 import javafx.application.Application;
-import log.Log;
+import log.Logger;
+import log.LogInterface;
 import model.DatabaseAccessObject;
 import model.HumanResourcesModel.Employee;
 
@@ -49,20 +50,20 @@ public class MainController {
 	/**
 	 * Logging system object
 	 */
-	private static Log log;
+	private static Logger logger;
 
 	public static void main(String[] args) {
 		try {
-			log = new Log("./src/log/logs/ShopSystem");
+			logger = Logger.getInstance();
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
-			log("MainController initialised - starting View");
+			Logger.logThis("MainController initialised - starting View");
 			Application.launch(View.class);
 		} catch (Exception controllerInitException) {
 			System.err.println(controllerInitException.getMessage());
-			log(controllerInitException);
+			Logger.logThis(controllerInitException);
 		} finally {
-			log.close();
+			Logger.closeLogger();
 		}
 
 	}
@@ -79,7 +80,7 @@ public class MainController {
 	 * @return an {@code ArrayList<Employee>} containing all employees from database
 	 */
 	public static ArrayList<Employee> getEmployeesFromDatabase() {
-		log("Employees retrieved from database");
+		Logger.logThis("Employees retrieved from database");
 		return dao.getEmployees();
 	}
 
@@ -167,31 +168,31 @@ public class MainController {
 		return view.getViewHumanResources().getSelectedEmployee();
 	}
 
-	/**
-	 * Logs the contents of an Exception
-	 * 
-	 * @param exceptionToLog
-	 */
-	public static void log(Exception exceptionToLog) {
-		log.log(exceptionToLog);
-	}
-
-	/**
-	 * Logs the contents of a String array
-	 * 
-	 * @param messagesToLog
-	 */
-	public static void log(String[] messagesToLog) {
-		log.log(messagesToLog);
-	}
-
-	/**
-	 * Logs a String
-	 * 
-	 * @param messageToLog
-	 */
-	public static void log(String messageToLog) {
-		log.log(messageToLog);
-	}
+	//	/**
+	//	 * Logs the contents of an Exception
+	//	 * 
+	//	 * @param exceptionToLog
+	//	 */
+	//	public static void log.log(Exception exceptionToLog) {
+	//		log.log.log(exceptionToLog);
+	//	}
+	//
+	//	/**
+	//	 * Logs the contents of a String array
+	//	 * 
+	//	 * @param messagesToLog
+	//	 */
+	//	public static void log.log(String[] messagesToLog) {
+	//		log.log.log(messagesToLog);
+	//	}
+	//
+	//	/**
+	//	 * Logs a String
+	//	 * 
+	//	 * @param messageToLog
+	//	 */
+	//	public static void log.log(String messageToLog) {
+	//		log.log.log(messageToLog);
+	//	}
 
 }

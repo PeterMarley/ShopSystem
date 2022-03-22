@@ -12,9 +12,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import controller.MainController;
+import log.LogInterface;
+import log.Logger;
 import model.HumanResourcesModel.Employee;
 import model.HumanResourcesModel.Person;
 
@@ -69,14 +72,15 @@ public class DatabaseAccessObject {
 	 * All Human Resources classes
 	 */
 	private final HumanResourcesModel MODEL;
+	private boolean logEnabled = false;
 
 	/**
 	 * Construct DataBaseAccessObject.
 	 * 
 	 * @param databaseRelativeFilepath - the relative filepath to the sqlite3 database
+	 * @param log                      - a LogInterface object. if null, all logging actions are outputted to console.
 	 */
 	public DatabaseAccessObject(String databaseRelativeFilepath) throws SQLException {
-
 		MODEL = new HumanResourcesModel();
 		FORMAT_OBJECT = new DateTimeFormatterBuilder()
 				.appendPattern("yyyy-MM-dd")
@@ -84,7 +88,6 @@ public class DatabaseAccessObject {
 		FORMAT_LOG = new DateTimeFormatterBuilder()
 				.appendPattern("dd-MM-yy HH:mm:ss.SS")
 				.toFormatter();
-
 		testConnection(databaseRelativeFilepath);
 
 	}
@@ -97,10 +100,10 @@ public class DatabaseAccessObject {
 	private void testConnection(String dbFilepath) throws SQLException {
 		try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);) {
 			this.dbFilepath = dbFilepath;
-			MainController.log("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
+			Logger.logThis("DatabaseAccessObject: setDatabaseLocation() successfully tested database connection and returned it " +
 					"to pool! @ " + LocalDateTime.now().format(FORMAT_LOG) + " (DB: " + dbFilepath + ")");
 		} catch (SQLException testConnectionEx) {
-			MainController.log(testConnectionEx);
+			Logger.logThis(testConnectionEx);
 			throw testConnectionEx;
 		}
 	}
@@ -116,7 +119,7 @@ public class DatabaseAccessObject {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + dbFilepath);
 		} catch (SQLException getConnectionEx) {
-			MainController.log(getConnectionEx);
+			Logger.logThis(getConnectionEx);
 			throw getConnectionEx;
 		}
 		return connection;
@@ -163,14 +166,14 @@ public class DatabaseAccessObject {
 							System.err.println(employeeReadException.getMessage());
 						}
 					}
-					MainController.log(employees.size() + " Employees retrieved from database");
+					Logger.logThis(employees.size() + " Employees retrieved from database");
 				}
 			}
 
 		} catch (SQLException getEmployeesEx) {
 			System.err.println("DAO: getEmployees() failed");
 			System.err.println(getEmployeesEx.getMessage());
-			MainController.log(getEmployeesEx);
+			Logger.logThis(getEmployeesEx);
 		}
 		return employees;
 	}
@@ -210,13 +213,13 @@ public class DatabaseAccessObject {
 
 					// add employee to database
 					addEmployeeStatement.executeUpdate();
-					MainController.log(new String[] { "Employee pushed to database: " + e.toString(), "personID: " + foreignKey });
+					Logger.logThis(new String[] { "Employee pushed to database: " + e.toString(), "personID: " + foreignKey });
 				}
 
 			} catch (SQLException addEmployeeException) {
 				System.err.println("DAO: addEmployee() failed");
 				System.err.println(addEmployeeException.getMessage());
-				MainController.log(addEmployeeException);
+				Logger.logThis(addEmployeeException);
 			}
 		}
 	}
@@ -253,11 +256,11 @@ public class DatabaseAccessObject {
 				try (ResultSet rs = addPersonStatement.getGeneratedKeys();) {
 					personID = rs.getInt(1);
 				}
-				MainController.log(new String[] { "Person pushed to database: " + person.toString(), "personID: " + personID });
+				Logger.logThis(new String[] { "Person pushed to database: " + person.toString(), "personID: " + personID });
 			}
 		} catch (SQLException addPersonEx) {
 			personID = -1;
-			MainController.log(addPersonEx);
+			Logger.logThis(addPersonEx);
 		}
 		return personID;
 	}
@@ -306,7 +309,7 @@ public class DatabaseAccessObject {
 								stmtUpdateEmployee.setString(4, editedEmployee.getEndDateAsString());
 								stmtUpdateEmployee.setInt(5, personID);
 								stmtUpdateEmployee.executeUpdate();
-								MainController.log(new String[] {
+								Logger.logThis(new String[] {
 										"Employee updated in database",
 										"Original Employee: " + originalEmployee.toString(),
 										"Edited Employee: " + editedEmployee.toString()
@@ -318,7 +321,7 @@ public class DatabaseAccessObject {
 			}
 		} catch (SQLException | IllegalArgumentException editEmployeeEx) {
 			editEmployeeEx.printStackTrace();
-			MainController.log(editEmployeeEx);
+			Logger.logThis(editEmployeeEx);
 		}
 		System.out.println("DAO editEmployee() stub");
 		System.out.println("Employee Pre-Edit" + originalEmployee);
@@ -365,7 +368,7 @@ public class DatabaseAccessObject {
 									stmtDeleteEmployee.setInt(1, personID);
 									stmtDeletePerson.executeUpdate();
 									stmtDeleteEmployee.executeUpdate();
-									MainController.log(new String[] {
+									Logger.logThis(new String[] {
 											"Employee deleted from database",
 											"Employee: " + employeeToDelete.toString()
 									});
@@ -377,7 +380,7 @@ public class DatabaseAccessObject {
 			}
 		} catch (SQLException deleteEmployeeEx) {
 			deleteEmployeeEx.printStackTrace();
-			MainController.log(deleteEmployeeEx);
+			Logger.logThis(deleteEmployeeEx);
 		}
 	}
 
