@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * A simple logging system. Preferred usage is to
+ * A simple logging system. <br>
+ * 
+ * This class is a singleton, only one instance at a time can be created. All parts of the program must then
+ * get this instance to log any actions
  * 
  * @author Peter Marley
  * @StudentNumber 13404067
@@ -21,7 +24,9 @@ import java.util.Arrays;
  * @GitHub https://github.com/PeterMarley
  *
  */
-public class Log implements AutoCloseable {
+public class Logger implements AutoCloseable {
+
+	private static Logger instance;
 
 	private enum LogMessageType {
 		GENERAL("General"),
@@ -45,12 +50,12 @@ public class Log implements AutoCloseable {
 	private LocalDateTime stamp;
 
 	// configurations
+	private static final String logFileLocation = "./src/log/logs/";
+	private static final String logFilePrefix = "ShopSystem";
 	private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 			.appendPattern("yyyy-MM-dd-'['HH'h'.mm'm'.ss's'.SSSS'ms]'")
 			.toFormatter();
 	private static final String logHeaders = "LoggedFrom,DateTimeStamp,LogType,Messages";
-
-	private static boolean logConfigured = false;
 
 	//**************************************************************\
 	//																*
@@ -58,16 +63,22 @@ public class Log implements AutoCloseable {
 	//																*
 	//**************************************************************/
 
+	public static Logger getInstance() {
+		if (instance == null) {
+			instance = new Logger(logFileLocation + logFilePrefix);
+		}
+		return instance;
+	}
+
 	/**
 	 * Constructs an instance of a logger
 	 * 
-	 * @param logfilepath relative filepath to log file (relative to working directory)
+	 * @param logfilepath relative filepath to log file (relative to working directory) ending in the prefix to the log file
 	 */
-	public Log(String logfilepath) {
+	private Logger(String logfilepath) {
 		try {
 			this.setLogfile(logfilepath);
 			this.writeHeaders();
-			logConfigured = true;
 		} catch (IllegalArgumentException | IOException logInstantiationEx) {
 			logInstantiationEx.printStackTrace();
 		}
@@ -123,13 +134,30 @@ public class Log implements AutoCloseable {
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	private void setLogfile(String logfilepath) throws IllegalArgumentException, IOException {
+	public void setLogfile(String logfilepath) throws IllegalArgumentException, IOException {
 		if (logfilepath == null || logfilepath.isBlank()) {
 			throw new IllegalArgumentException("logfilepath cannot be null or blank");
 		}
+		File previousLogfile = logfile;
 		stamp = LocalDateTime.now();
 		logfile = new File(logfilepath + "-" + stamp.format(formatter) + ".csv");
+		try (BufferedWriter bw = getBufferedWriter()) {
+		} catch (IOException newLogfileInvalidEx) {
+			System.out.printf("logfilepath invalid%n" +
+					"\"" + logfilepath + "\"%n" +
+					"Reset back to " + previousLogfile.toString() + "%n" +
+					newLogfileInvalidEx.getMessage());
+			logfile = previousLogfile;
+		}
 		System.out.println(logfile);
+	}
+	
+	public void setLogfilePath() {
+		//TODO
+	}
+	
+	public void setLogfilePrefix() {
+		//TODO
 	}
 
 	/**
@@ -142,7 +170,10 @@ public class Log implements AutoCloseable {
 				bufferedWriter.close();
 		} catch (IOException e) {
 		}
+	}
 
+	public static void closeLogger() {
+		instance.close();
 	}
 
 	//**************************************************************\
@@ -171,10 +202,9 @@ public class Log implements AutoCloseable {
 	 * @param LogMessageType
 	 */
 	private void log(String[] message, LogMessageType type) {
-
 		String[] logMessage = constructLogMessage(message, type);
 
-		if (logConfigured && logMessage != null) {
+		if (getInstance() != null && logMessage != null) {
 			try (BufferedWriter bw = getBufferedWriter()) {
 				for (int i = 0; i < logMessage.length; i++) {
 					bw.write((logMessage[i] != null) ? logMessage[i] : "null");
@@ -202,8 +232,9 @@ public class Log implements AutoCloseable {
 	 * 
 	 * @param message
 	 */
-	public void log(String[] message) {
-		log(message, LogMessageType.GENERAL);
+	public static void logThis(String[] message) {
+		getInstance();
+		instance.log(message, LogMessageType.GENERAL);
 	}
 
 	/**
@@ -211,8 +242,9 @@ public class Log implements AutoCloseable {
 	 *
 	 * @param message
 	 */
-	public void log(String message) {
-		log(new String[] { message }, LogMessageType.GENERAL);
+	public static void logThis(String message) {
+		getInstance();
+		instance.log(new String[] { message }, LogMessageType.GENERAL);
 	}
 
 	/**
@@ -220,12 +252,13 @@ public class Log implements AutoCloseable {
 	 * 
 	 * @param messages
 	 */
-	public void log(ArrayList<String> messages) {
-		String[] messageStr = new String[messages.size()];
+	public static void logThis(ArrayList<String> messages) {
+		getInstance();
+		String[] msgArr = new String[messages.size()];
 		for (int i = 0; i < messages.size(); i++) {
-			messageStr[i] = messages.get(i);
+			msgArr[i] = messages.get(i);
 		}
-		log(messageStr, LogMessageType.GENERAL);
+		instance.log(msgArr, LogMessageType.GENERAL);
 	}
 
 	/**
@@ -233,7 +266,8 @@ public class Log implements AutoCloseable {
 	 * 
 	 * @param exception
 	 */
-	public void log(Exception exception) {
+	public static void logThis(Exception exception) {
+		getInstance();
 		String[] messages = new String[exception.getStackTrace().length + 2];
 		messages[0] = (exception.getMessage() != null) ? exception.getMessage() : "No Message";
 		messages[1] = (exception.getCause() != null) ? exception.getCause().toString() : "No Cause";
@@ -242,6 +276,6 @@ public class Log implements AutoCloseable {
 			messages[index] = s.toString();
 			index++;
 		}
-		log(messages, LogMessageType.EXCEPTION);
+		instance.log(messages, LogMessageType.EXCEPTION);
 	}
 }

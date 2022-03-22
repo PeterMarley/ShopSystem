@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import controller.MainController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import log.Logger;
 import javafx.scene.control.Alert.AlertType;
 import model.HumanResourcesModel;
 import model.HumanResourcesModel.Employee;
@@ -22,12 +23,12 @@ public class ViewEmployeeDetailControllerAdd extends ViewEmployeeDetailControlle
 	@Override
 	public void employeeToDatabase() {
 		
-		String nullStr = null;
-		try {
-			nullStr.toString();
-		} catch (Exception e) {
-			MainController.log(e);
-		}
+//		String nullStr = null;
+//		try {
+//			nullStr.toString();
+//		} catch (Exception e) {
+//			Logger.logThis(e);
+//		}
 		
 		boolean[] validations = super.validateEmployeeDataFromGUI();
 		String errorMsg = super.getAndClearValidationMessage();

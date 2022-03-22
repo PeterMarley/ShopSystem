@@ -7,7 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX17"/>
-	<classpathentry kind="lib" path="./lib/sqlite-jdbc-3.36.0.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JDBCsqlite"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="junitTests"/>
 	<classpathentry kind="output" path="bin"/>
