@@ -50,11 +50,11 @@ public class MainController {
 	/**
 	 * Logging system object
 	 */
-	private static Logger logger;
+	//private static Logger logger;
 
 	public static void main(String[] args) {
 		try {
-			logger = Logger.getInstance();
+			Logger.initialise();
 			dao = new DatabaseAccessObject("./src/model/shop.db");
 			view = new View();
 			Logger.logThis("MainController initialised - starting View");
@@ -80,7 +80,6 @@ public class MainController {
 	 * @return an {@code ArrayList<Employee>} containing all employees from database
 	 */
 	public static ArrayList<Employee> getEmployeesFromDatabase() {
-		Logger.logThis("Employees retrieved from database");
 		return dao.getEmployees();
 	}
 

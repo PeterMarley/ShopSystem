@@ -72,7 +72,8 @@ public class DatabaseAccessObject {
 	 * All Human Resources classes
 	 */
 	private final HumanResourcesModel MODEL;
-	private boolean logEnabled = false;
+
+	private static final int INVALID_KEY_RETURN = -1;
 
 	/**
 	 * Construct DataBaseAccessObject.
@@ -141,34 +142,28 @@ public class DatabaseAccessObject {
 		ArrayList<Employee> employees = new ArrayList<Employee>();
 
 		// try-with-resources Connection
-		try (Connection connection = getConnection();) {
+		try (Connection connection = getConnection();
+				Statement getEmployeesStatement = connection.createStatement();
+				ResultSet resultSet = getEmployeesStatement.executeQuery(GET_EMPLOYEES);) {
 
-			// try-with-resources Statement
-			try (Statement getEmployeesStatement = connection.createStatement()) {
-
-				// try-with-resources ResultSet
-				try (ResultSet resultSet = getEmployeesStatement.executeQuery(GET_EMPLOYEES);) {
-
-					// add all result rows as Employees to employees
-					while (resultSet.next()) {
-						try {
-							employees.add(MODEL.new Employee(
-									resultSet.getString("forename"),
-									resultSet.getString("surname"),
-									resultSet.getString("email"),
-									resultSet.getString("phoneNumber"),
-									resultSet.getInt("hourlyRateInPence"),
-									resultSet.getDouble("hoursPerWeek"),
-									LocalDate.parse(resultSet.getString("startDate"), FORMAT_OBJECT),
-									(resultSet.getString("endDate") == null || resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
-						} catch (DateTimeException | IllegalArgumentException employeeReadException) {
-							System.err.println("DAO: date convertion exception " + employeeReadException.getClass());
-							System.err.println(employeeReadException.getMessage());
-						}
-					}
-					Logger.logThis(employees.size() + " Employees retrieved from database");
+			// add all result rows as Employees to employees
+			while (resultSet.next()) {
+				try {
+					employees.add(MODEL.new Employee(
+							resultSet.getString("forename"),
+							resultSet.getString("surname"),
+							resultSet.getString("email"),
+							resultSet.getString("phoneNumber"),
+							resultSet.getInt("hourlyRateInPence"),
+							resultSet.getDouble("hoursPerWeek"),
+							LocalDate.parse(resultSet.getString("startDate"), FORMAT_OBJECT),
+							(resultSet.getString("endDate") == null || resultSet.getString("endDate").isBlank()) ? null : LocalDate.parse(resultSet.getString("endDate"), FORMAT_OBJECT)));
+				} catch (DateTimeException | IllegalArgumentException employeeReadException) {
+					System.err.println("DAO: date convertion exception " + employeeReadException.getClass());
+					System.err.println(employeeReadException.getMessage());
 				}
 			}
+			Logger.logThis(employees.size() + " Employees retrieved from database");
 
 		} catch (SQLException getEmployeesEx) {
 			System.err.println("DAO: getEmployees() failed");
@@ -192,29 +187,25 @@ public class DatabaseAccessObject {
 	public void addEmployee(Employee e) {
 		// add person and get it's primary key
 		int foreignKey = addPerson(e);
+		String addEmployeeSQL = "INSERT INTO employee (personID,hourlyRateInPence,hoursPerWeek,startDate,endDate) VALUES (?,?,?,?,?);";
 
 		// if person added successfully
-		if (foreignKey != -1) {
+		if (foreignKey != INVALID_KEY_RETURN) {
 
 			// try-with-resources Connection
-			try (Connection connection = getConnection()) {
+			try (Connection connection = getConnection();
+					PreparedStatement addEmployeeStatement = connection.prepareStatement(addEmployeeSQL);) {
 
-				String addEmployeeSQL = "INSERT INTO employee (personID,hourlyRateInPence,hoursPerWeek,startDate,endDate) VALUES (?,?,?,?,?);";
+				// build statement
+				addEmployeeStatement.setInt(1, foreignKey);
+				addEmployeeStatement.setInt(2, e.getHourlyRate());
+				addEmployeeStatement.setDouble(3, e.getHoursPerWeek());
+				addEmployeeStatement.setString(4, e.getStartDateAsLocalDate().format(FORMAT_OBJECT));
+				addEmployeeStatement.setString(5, (e.getEndDateAsLocalDate() == null) ? "" : e.getEndDateAsLocalDate().format(FORMAT_OBJECT));
 
-				// try-with-resources Statement
-				try (PreparedStatement addEmployeeStatement = connection.prepareStatement(addEmployeeSQL)) {
-
-					// build statement
-					addEmployeeStatement.setInt(1, foreignKey);
-					addEmployeeStatement.setInt(2, e.getHourlyRate());
-					addEmployeeStatement.setDouble(3, e.getHoursPerWeek());
-					addEmployeeStatement.setString(4, e.getStartDateAsLocalDate().format(FORMAT_OBJECT));
-					addEmployeeStatement.setString(5, (e.getEndDateAsLocalDate() == null) ? "" : e.getEndDateAsLocalDate().format(FORMAT_OBJECT));
-
-					// add employee to database
-					addEmployeeStatement.executeUpdate();
-					Logger.logThis(new String[] { "Employee pushed to database: " + e.toString(), "personID: " + foreignKey });
-				}
+				// add employee to database
+				addEmployeeStatement.executeUpdate();
+				Logger.logThis(new String[] { "Employee pushed to database: " + e.toString(), "personID: " + foreignKey });
 
 			} catch (SQLException addEmployeeException) {
 				System.err.println("DAO: addEmployee() failed");
@@ -237,29 +228,27 @@ public class DatabaseAccessObject {
 		int personID;
 		final String ADD_PERSON = "INSERT INTO person (forename,surname,email,phoneNumber) VALUES (?,?,?,?);";
 
-		// try-with-resources Connection
-		try (Connection connection = getConnection();) {
+		// try-with-resources Connection & statement
+		try (Connection connection = getConnection();
+				PreparedStatement addPersonStatement = connection.prepareStatement(ADD_PERSON);) {
 
-			// try-with-resources PreparedStatement
-			try (PreparedStatement addPersonStatement = connection.prepareStatement(ADD_PERSON);) {
+			// build PreparedStatement
+			addPersonStatement.setString(1, person.getForename());
+			addPersonStatement.setString(2, person.getSurname());
+			addPersonStatement.setString(3, person.getEmail());
+			addPersonStatement.setString(4, person.getPhoneNumber());
 
-				// build PreparedStatement
-				addPersonStatement.setString(1, person.getForename());
-				addPersonStatement.setString(2, person.getSurname());
-				addPersonStatement.setString(3, person.getEmail());
-				addPersonStatement.setString(4, person.getPhoneNumber());
+			// execute PreparedStatement
+			addPersonStatement.executeUpdate();
 
-				// execute PreparedStatement
-				addPersonStatement.executeUpdate();
-
-				// try-with-resources ResultSet
-				try (ResultSet rs = addPersonStatement.getGeneratedKeys();) {
-					personID = rs.getInt(1);
-				}
-				Logger.logThis(new String[] { "Person pushed to database: " + person.toString(), "personID: " + personID });
+			// try-with-resources ResultSet
+			try (ResultSet rs = addPersonStatement.getGeneratedKeys();) {
+				personID = rs.getInt(1);
 			}
+			Logger.logThis("Person pushed to database: " + person.toString(), "personID: " + personID);
+
 		} catch (SQLException addPersonEx) {
-			personID = -1;
+			personID = INVALID_KEY_RETURN;
 			Logger.logThis(addPersonEx);
 		}
 		return personID;

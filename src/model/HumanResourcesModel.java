@@ -417,13 +417,13 @@ public class HumanResourcesModel {
 		@Override
 		public String toString() {
 			NumberFormat formatter = NumberFormat.getCurrencyInstance();
-			return "Employee [name=" + super.getForename() +
-					", email=" + super.getEmail() +
-					", phoneNumber=" + super.getPhoneNumber() +
-					", rate=" + formatter.format(this.getHourlyRate() / 100.0) +
-					", weeklyHours=" + this.getHoursPerWeek() +
-					", startDate=" + this.getStartDateAsLocalDate() +
-					", endDate=" + ((this.getEndDateAsLocalDate() == null) ? "Still Employed" : this.getEndDateAsLocalDate()) + "]";
+			return "Employee [name=\"" + super.getForename() + "\"" +
+					" email=\"" + super.getEmail() +"\"" +
+					" phoneNumber=\"" + super.getPhoneNumber() +"\"" +
+					" rate=\"" + formatter.format(this.getHourlyRate() / 100.0) +"\"" +
+					" weeklyHours=\"" + this.getHoursPerWeek() +"\"" +
+					" startDate=\"" + this.getStartDateAsLocalDate() +"\"" +
+					" endDate=\"" + ((this.getEndDateAsLocalDate() == null) ? "Still Employed" : this.getEndDateAsLocalDate()) + "\"]";
 		}
 
 		@Override

@@ -56,6 +56,7 @@ public class Logger implements AutoCloseable {
 			.appendPattern("yyyy-MM-dd-'['HH'h'.mm'm'.ss's'.SSSS'ms]'")
 			.toFormatter();
 	private static final String logHeaders = "LoggedFrom,DateTimeStamp,LogType,Messages";
+	private static final String MSG_LOG_NOT_CONFIGURED = "Log instance is null! Log not initialised!";
 
 	//**************************************************************\
 	//																*
@@ -63,7 +64,7 @@ public class Logger implements AutoCloseable {
 	//																*
 	//**************************************************************/
 
-	public static Logger getInstance() {
+	public static Logger initialise() {
 		if (instance == null) {
 			instance = new Logger(logFileLocation + logFilePrefix);
 		}
@@ -95,24 +96,6 @@ public class Logger implements AutoCloseable {
 			e.printStackTrace();
 		}
 
-	}
-
-	/**
-	 * Gets the fully qualified name class and line of code that called the log
-	 * 
-	 * @return
-	 */
-	private String getRelevantStackInfo() {
-		ArrayList<StackTraceElement> stack = new ArrayList<StackTraceElement>();
-		//TODO figure out what part of stack trace to return thats actually useful
-		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
-			if (!e.toString().startsWith("java") && !e.toString().startsWith("log") && !e.toString().startsWith("Log")) {
-				stack.add(e);
-			}
-		}
-		//return Thread.currentThread().get
-		return stack.toString().replace(',', '-');
-		//return (stack.length >= 3) ? stack[0].toString() + " - " + stack[1].toString() + " - " + stack[2].toString() : stack[0].toString();
 	}
 
 	/**
@@ -151,11 +134,11 @@ public class Logger implements AutoCloseable {
 		}
 		System.out.println(logfile);
 	}
-	
+
 	public void setLogfilePath() {
 		//TODO
 	}
-	
+
 	public void setLogfilePrefix() {
 		//TODO
 	}
@@ -204,7 +187,8 @@ public class Logger implements AutoCloseable {
 	private void log(String[] message, LogMessageType type) {
 		String[] logMessage = constructLogMessage(message, type);
 
-		if (getInstance() != null && logMessage != null) {
+		// TODO remove getInstance() conditional below?? useless perhaps?
+		if (initialise() != null && logMessage != null) {
 			try (BufferedWriter bw = getBufferedWriter()) {
 				for (int i = 0; i < logMessage.length; i++) {
 					bw.write((logMessage[i] != null) ? logMessage[i] : "null");
@@ -228,13 +212,50 @@ public class Logger implements AutoCloseable {
 	}
 
 	/**
-	 * Logs a series of messages in a String array
+	 * Gets the fully qualified name class and line of code that called the log
 	 * 
-	 * @param message
+	 * @return
 	 */
-	public static void logThis(String[] message) {
-		getInstance();
-		instance.log(message, LogMessageType.GENERAL);
+	private String getRelevantStackInfo() {
+		ArrayList<StackTraceElement> stack = new ArrayList<StackTraceElement>();
+		//TODO figure out what part of stack trace to return thats actually useful
+		for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+			if (!e.toString().startsWith("java") && !e.toString().startsWith("log") && !e.toString().startsWith("Log")) {
+				stack.add(e);
+			}
+		}
+		//return Thread.currentThread().get
+		return stack.toString().replace(',', '-');
+		//return (stack.length >= 3) ? stack[0].toString() + " - " + stack[1].toString() + " - " + stack[2].toString() : stack[0].toString();
+	}
+
+	//**************************************************************\
+	//																*
+	//		Publicly accessible logging methods						*
+	//																*
+	//**************************************************************/
+
+	//	/**
+	//	 * Logs a series of messages in a String array
+	//	 * 
+	//	 * @param message
+	//	 */
+	//	public static void logThis(String[] message) {
+	//		getInstance();
+	//		instance.log(message, LogMessageType.GENERAL);
+	//	}
+
+	/**
+	 * Logs a series of messages passed in as a String vararg
+	 * 
+	 * @param message a String vararg
+	 */
+	public static void logThis(String... messages) {
+		if (instance != null) {
+			instance.log(messages, LogMessageType.GENERAL);
+		} else {
+			throw new NullPointerException(MSG_LOG_NOT_CONFIGURED);
+		}
 	}
 
 	/**
@@ -243,8 +264,11 @@ public class Logger implements AutoCloseable {
 	 * @param message
 	 */
 	public static void logThis(String message) {
-		getInstance();
-		instance.log(new String[] { message }, LogMessageType.GENERAL);
+		if (instance != null) {
+			instance.log(new String[] { message }, LogMessageType.GENERAL);
+		} else {
+			throw new NullPointerException(MSG_LOG_NOT_CONFIGURED);
+		}
 	}
 
 	/**
@@ -253,12 +277,13 @@ public class Logger implements AutoCloseable {
 	 * @param messages
 	 */
 	public static void logThis(ArrayList<String> messages) {
-		getInstance();
-		String[] msgArr = new String[messages.size()];
-		for (int i = 0; i < messages.size(); i++) {
-			msgArr[i] = messages.get(i);
+		if (instance != null) {
+			String[] msgArr = new String[messages.size()];
+			msgArr = messages.toArray(msgArr);
+			instance.log(msgArr, LogMessageType.GENERAL);
+		} else {
+			throw new NullPointerException(MSG_LOG_NOT_CONFIGURED);
 		}
-		instance.log(msgArr, LogMessageType.GENERAL);
 	}
 
 	/**
@@ -267,15 +292,18 @@ public class Logger implements AutoCloseable {
 	 * @param exception
 	 */
 	public static void logThis(Exception exception) {
-		getInstance();
-		String[] messages = new String[exception.getStackTrace().length + 2];
-		messages[0] = (exception.getMessage() != null) ? exception.getMessage() : "No Message";
-		messages[1] = (exception.getCause() != null) ? exception.getCause().toString() : "No Cause";
-		int index = 2;
-		for (StackTraceElement s : exception.getStackTrace()) {
-			messages[index] = s.toString();
-			index++;
+		if (instance != null) {
+			String[] messages = new String[exception.getStackTrace().length + 2];
+			messages[0] = (exception.getMessage() != null) ? exception.getMessage() : "No Message";
+			messages[1] = (exception.getCause() != null) ? exception.getCause().toString() : "No Cause";
+			int index = 2;
+			for (StackTraceElement s : exception.getStackTrace()) {
+				messages[index] = s.toString();
+				index++;
+			}
+			instance.log(messages, LogMessageType.EXCEPTION);
+		} else {
+			throw new NullPointerException(MSG_LOG_NOT_CONFIGURED);
 		}
-		instance.log(messages, LogMessageType.EXCEPTION);
 	}
 }

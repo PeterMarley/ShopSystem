@@ -14,7 +14,7 @@ class TestLog {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		log = Logger.getInstance();
+		log = Logger.initialise();
 	}
 
 	@Test
